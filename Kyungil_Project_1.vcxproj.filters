@@ -25,6 +25,9 @@
     <Filter Include="GameManager">
       <UniqueIdentifier>{a64e0abe-061a-4355-86cf-6bec9984b9ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BSP">
+      <UniqueIdentifier>{018a4b75-5b3b-4a0b-917a-6fe66fbbaf50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="MapManager.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="BSPGenerator.cpp">
+      <Filter>BSP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -67,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="MapManager.h">
       <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BSPGenerator.h">
+      <Filter>BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

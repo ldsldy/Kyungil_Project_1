@@ -1,4 +1,4 @@
-
+#include "Map.h"
 //단일 책임
 //게임 매니저를 통하자
 
@@ -6,5 +6,10 @@
 //다른 클래스로 뿌린다.
 int main()
 {
+	Map testMap(25, 25);
+	testMap.Init();
+	testMap.PrintTestMap();
+	testMap.PrintRegionMap();
 
+	return 0;
 }

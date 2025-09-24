@@ -5,47 +5,50 @@ void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize)
 {
 	InMap.Init();
 
-	//·çÆ® ³ëµå »ý¼º
-	delete Root;
+	//ë£¨íŠ¸ ë…¸ë“œ ì•ˆì „í•œ ë©”ëª¨ë¦¬ ê´€ë¦¬
+	if (Root != nullptr) {
+		delete Root;
+		Root = nullptr;
+	}
 	Root = new BSPNode(0, 0, InMap.GetMapLength(), InMap.GetMapLength());
 	
-	//BSP Æ®¸® ºÐÇÒ
+	//BSP Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SplitNode(Root, MinRoomSize);
 
-	//¹æ »ý¼º
+	//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CreateRooms(Root, InMap, MinRoomSize);
 
-	//º¹µµ »ý¼º
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CreateCorridors(Root, InMap);
 }
 
 void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 {
 	int MinRegionLength = MinRoomSize * 2 + 1;
-	// ³ëµå°¡ ¾øÀ¸¸é Á¾·á
+	// ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (!InNode) return;
 
-	// ³ª´©¾îµµ ¹æÀ» ¸¸µé ¼ö ¾ø´Â Å©±â(¹æÀÌ 2°³ µé¾î°¡´Â »çÀÌÁî)ÀÎ °æ¿ì Á¾·á
+	// ï¿½ï¿½ï¿½ï¿½ï¿½îµµ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (InNode->Width <= MinRegionLength && InNode->Height <= MinRegionLength)
 		return;
 
-	// ºÐÇÒ ¹æÇâ °áÁ¤
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	bool SplitHorizontally = false;
-	// °¡·Î·Î ±ä °æ¿ì ¼öÁ÷ ºÐÇÒ
+	// ï¿½ï¿½ï¿½Î·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (InNode->Width > InNode->Height && InNode->Width > MinRegionLength)
 		SplitHorizontally = false;
-	// ¼¼·Î·Î ±ä °æ¿ì ¼öÆò ºÐÇÒ
+	// ï¿½ï¿½ï¿½Î·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	else if (InNode->Height > InNode->Width && InNode->Height > MinRegionLength)
 		SplitHorizontally = true;
-	// °°À¸¸é ·£´ý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	else if (InNode->Width > MinRegionLength && InNode->Height > MinRegionLength)
 		SplitHorizontally = rng() % 2;
 	else
 		return;
 
-	// ºÐÇÒ À§Ä¡ 
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ 
 	int SplitPos;
-	//¼öÆò ºÐÇÒ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (SplitHorizontally)
 	{
 		SplitPos = MinRoomSize + (rng() % (InNode->Height - MinRoomSize * 2));
@@ -53,7 +56,7 @@ void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 		InNode->Left = new BSPNode(InNode->x, InNode->y, InNode->Width, SplitPos);
 		InNode->Right = new BSPNode(InNode->x, InNode->y + SplitPos, InNode->Width, InNode->Height - SplitPos);
 	}
-	//¼öÁ÷ ºÐÇÒ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	else
 	{
 		SplitPos = MinRoomSize + (rng() % (InNode->Width - MinRoomSize * 2));
@@ -64,7 +67,7 @@ void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 
 	InNode->IsLeaf = false;
 
-	//Àç±ÍÀûÀ¸·Î ÀÚ½Ä ³ëµå ºÐÇÒ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SplitNode(InNode->Left, MinRoomSize);
 	SplitNode(InNode->Right, MinRoomSize);
 }
@@ -75,18 +78,18 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 
 	if (InNode->IsLeaf)
 	{
-		//¸®ÇÁ ³ëµå¿¡ ¹æ »ý¼º (º® 2°³ µÎ²² °í·Á)
-		int RoomWidth = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
-		int RoomHeight = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ 2ï¿½ï¿½ ï¿½Î²ï¿½ ï¿½ï¿½ï¿½ï¿½)
+		int RoomWidth = max((int)MinRoomSize, InNode->Width - 2 - (int)(rng() % 3));
+		int RoomHeight = max((int)MinRoomSize, InNode->Height - 2 - (int)(rng() % 3));
 
-		//¹æÀÇ À§Ä¡´Â ³ëµå ³»ºÎ¿¡¼­ ·£´ý (º® 1Ä­ µÎ²² °í·Á)
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ 1Ä­ ï¿½Î²ï¿½ ï¿½ï¿½ï¿½ï¿½)
 		int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
 		int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
 		
-		//³ëµå¿¡ ¹æ Á¤º¸ ÀúÀå
+		//ï¿½ï¿½å¿¡ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		InNode->ContainedRoom = Room(RoomX, RoomY, RoomWidth, RoomHeight);
 
-		//¸Ê¿¡ ¹æ »ý¼º
+		//ï¿½Ê¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for (int y = RoomY; y < RoomY + RoomHeight; y++)
 		{
 			for (int x = RoomX; x < RoomX + RoomWidth; x++)
@@ -100,7 +103,7 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 	}
 	else
 	{
-		//Àç±ÍÀûÀ¸·Î ÀÚ½Ä ³ëµå¿¡ ¹æ »ý¼º
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		CreateRooms(InNode->Left, InMap, MinRoomSize);
 		CreateRooms(InNode->Right, InMap, MinRoomSize);
 	}
@@ -110,11 +113,11 @@ void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
 {
 	if (!InNode || InNode->IsLeaf) return;
 
-	//ÀÚ½Ä ³ëµåµé¿¡ ´ëÇØ º¹µµ »ý¼º
+	//ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½é¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CreateCorridors(InNode->Left, InMap);
 	CreateCorridors(InNode->Right, InMap);
 
-	//ÁÂ¿ì ÀÚ½ÄÀÇ ¹æµéÀ» ¿¬°á
+	//ï¿½Â¿ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (InNode->Left && InNode->Right)
 	{
 		ConnectRooms(InNode->Left, InNode->Right, InMap);
@@ -128,17 +131,17 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 
 	if (rng() % 2)
 	{
-		//¼öÆò-¼öÁ÷ ¼ø¼­ÀÇ LÀÚÇü º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Lï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int StartX = min(Center1.x, Center2.x);
 		int EndX = max(Center1.x, Center2.x);
-		//¼öÆò º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for (int x = StartX; x <= EndX; x++)
 		{
 			if (InMap.IsValidPosition(x, Center1.y))
 				InMap.SetCellType(x, Center1.y, CellType::Floor);
 		}
 
-		//¼öÁ÷ º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int StartY = min(Center1.y, Center2.y);
 		int EndY = max(Center1.y, Center2.y);
 		for (int y = StartY; y <= EndY; y++)
@@ -149,16 +152,16 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 	}
 	else
 	{
-		//¼öÁ÷-¼öÆò ¼ø¼­ÀÇ LÀÚÇü º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Lï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int StartY = min(Center1.y, Center2.y);
 		int EndY = max(Center1.y, Center2.y);
-		//¼öÁ÷ º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for (int y = StartY; y <= EndY; y++)
 		{
 			if (InMap.IsValidPosition(Center1.x, y))
 				InMap.SetCellType(Center1.x, y, CellType::Floor);
 		}
-		//¼öÆò º¹µµ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int StartX = min(Center1.x, Center2.x);
 		int EndX = max(Center1.x, Center2.x);
 		for (int x = StartX; x <= EndX; x++)

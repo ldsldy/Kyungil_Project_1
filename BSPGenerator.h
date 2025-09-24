@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Map InMap; //Àü¹æ ¼±¾ð
+Map InMap; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 struct Room
 {
@@ -28,10 +28,10 @@ struct Room
 	}
 };
 
-//BSP³ëµå - ÀÎµ¦½º ±â¹Ý °ü¸® À¯Áö 
+//BSPï¿½ï¿½ï¿½ - ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 struct BSPNode
 {
-	int x, y, Width, Height; //¸Ê ÁÂÇ¥, Å©±â
+	int x, y, Width, Height; //ï¿½ï¿½ ï¿½ï¿½Ç¥, Å©ï¿½ï¿½
 	BSPNode* Left;
 	BSPNode* Right;
 	bool IsLeaf;
@@ -52,7 +52,7 @@ struct BSPNode
 		{
 			return ContainedRoom.GetCenter();
 		}
-		//¸®ÇÁ ³ëµå°¡ ¾Æ´Ï¸é ÀÚ½Ä ³ëµå¿¡¼­ ¹æ Áß½ÉÁ¡ Ã£±â
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å°¡ ï¿½Æ´Ï¸ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
 		else if (!IsLeaf)
 		{
 			if (Left && Left->GetRoomCenter().x != 0)
@@ -60,6 +60,7 @@ struct BSPNode
 			if (Right && Right->GetRoomCenter().x !=0)
 				return Right->GetRoomCenter();
 		}
+		return Point(0, 0); // Default return value
 	}
 };
 
@@ -72,26 +73,26 @@ public:
 		delete Root;
 	}
 
-	//Map Å¬·¡½º¿¡¼­ º¤ÅÍ¸¦ ¹Þ¾Æ BSP Æ®¸® »ý¼º ¹× ¸Ê »ý¼º
+	//Map Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Þ¾ï¿½ BSP Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void GenerateMap(Map& InMap, unsigned int MinRoomSize = 6);
 
 private:
 	BSPNode* Root;
 	mt19937 rng;
 
-	//BSP Æ®¸® ºÐÇÒ
+	//BSP Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void SplitNode(BSPNode* InNode, unsigned int MinRoomSize);
 
-	// ¹æ »ý¼º
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoomSize);
 
-	//º¹µµ »ý¼º
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void CreateCorridors(BSPNode* InNode, Map& InMap);
 
-	//µÎ ¹æÀ» ¿¬°áÇÏ´Â º¹µµ »ý¼º
+	//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap);
 
-	//±¸¿ªÀÇ Áß½ÉÁ¡ Ã£±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
 	Point GetRoomCenter(const BSPNode* InNode) const;
 };
 

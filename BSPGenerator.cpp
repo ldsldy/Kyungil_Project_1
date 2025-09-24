@@ -1,127 +1,153 @@
 #include "BSPGenerator.h"
+#include <algorithm>
 
-void BSPGenerator::CreateRoomsInNode(int NodeIndex)
+void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize)
 {
-	const BSPNode& node = Nodes[NodeIndex];
+	InMap.Init();
 
-	int NumRegionsX = node.Width / RegionSize;	//노드 내 가로 구역 개수
-	int NumRegionsY = node.Height / RegionSize; //노드 내 세로 구역 개수
+	//루트 노드 생성
+	delete Root;
+	Root = new BSPNode(0, 0, InMap.GetMapLength(), InMap.GetMapLength());
 	
-	//각 구역에 70% 확률로 방 생성
-	for (int regY = 0; regY < NumRegionsY; regY++)
+	//BSP 트리 분할
+	SplitNode(Root, MinRoomSize);
+
+	//방 생성
+	CreateRooms(Root, InMap, MinRoomSize);
+
+	//복도 생성
+	CreateCorridors(Root, InMap);
+}
+
+void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
+{
+	int MinRegionLength = MinRoomSize * 2 + 1;
+	// 노드가 없으면 종료
+	if (!InNode) return;
+
+	// 나누어도 방을 만들 수 없는 크기(방이 2개 들어가는 사이즈)인 경우 종료
+	if (InNode->Width <= MinRegionLength && InNode->Height <= MinRegionLength)
+		return;
+
+	// 분할 방향 결정
+	bool SplitHorizontally = false;
+	// 가로로 긴 경우 수직 분할
+	if (InNode->Width > InNode->Height && InNode->Width > MinRegionLength)
+		SplitHorizontally = false;
+	// 세로로 긴 경우 수평 분할
+	else if (InNode->Height > InNode->Width && InNode->Height > MinRegionLength)
+		SplitHorizontally = true;
+	// 같으면 랜덤
+	else if (InNode->Width > MinRegionLength && InNode->Height > MinRegionLength)
+		SplitHorizontally = rng() % 2;
+	else
+		return;
+
+	// 분할 위치 
+	int SplitPos;
+	//수평 분할
+	if (SplitHorizontally)
 	{
-		for (int regX = 0; regX < NumRegionsX; regX++)
+		SplitPos = MinRoomSize + (rng() % (InNode->Height - MinRoomSize * 2));
+
+		InNode->Left = new BSPNode(InNode->x, InNode->y, InNode->Width, SplitPos);
+		InNode->Right = new BSPNode(InNode->x, InNode->y + SplitPos, InNode->Width, InNode->Height - SplitPos);
+	}
+	//수직 분할
+	else
+	{
+		SplitPos = MinRoomSize + (rng() % (InNode->Width - MinRoomSize * 2));
+
+		InNode->Left = new BSPNode(InNode->x, InNode->y, SplitPos, InNode->Height);
+		InNode->Right = new BSPNode(InNode->x + SplitPos, InNode->y, InNode->Width - SplitPos, InNode->Height);
+	}
+
+	InNode->IsLeaf = false;
+
+	//재귀적으로 자식 노드 분할
+	SplitNode(InNode->Left, MinRoomSize);
+	SplitNode(InNode->Right, MinRoomSize);
+}
+
+void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoomSize)
+{
+	if (!InNode) return;
+
+	if (InNode->IsLeaf)
+	{
+		//리프 노드에 방 생성 (벽 2개 두께 고려)
+		int RoomWidth = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
+		int RoomHeight = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
+
+		//방의 위치는 노드 내부에서 랜덤 (벽 1칸 두께 고려)
+		int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
+		int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
+
+		//맵에 방 생성
+		for (int y = RoomY; y < RoomY + RoomHeight; y++)
 		{
-			if (FastRandomRange(100) < 70)
+			for (int x = RoomX; x < RoomX + RoomWidth; x++)
 			{
-				CreateRoomInRegion(node, regX, regY);
+				if (InMap.IsValidPosition(x, y))
+				{
+					InMap.SetCellType(x, y, CellType::Floor);
+				}
 			}
 		}
+		InNode->x = RoomX;
+		InNode->y = RoomY;
+		InNode->Width = RoomWidth;
+		InNode->Height = RoomHeight;
 	}
-
-}
-
-void BSPGenerator::CreateRoomInRegion(const BSPNode& Node, int RegX, int RegY)
-{
-	int RegionStartX = Node.x + RegX * RegionSize;	//구역 시작 좌표
-	int RegionStartY = Node.y + RegY * RegionSize;
-
-	//구역 내에서 방 크기 랜덤 결정(2*2 ~ 3*3) <= 소프트 코딩으로 바꾸는 고민해보기
-	int RoomWidth = 2 + FastRandomRange(2);
-	int RoomHeight = 2 + FastRandomRange(2);
-	
-	//구역 내에서 방 위치 랜덤 결정
-	int MaxPosX = RegionStartX + RegionSize - RoomWidth - 1; //-1은 벽 유지를 위해
-	int MaxPosY = RegionStartY + RegionSize - RoomHeight-1;
-	int MinPosX = RegionStartX + 1;	//+1은 벽 유지를 위해
-	int MinPosY = RegionStartY + 1;
-
-	//방이 구역 내에 들어갈 수 있는지 검사
-	if (MaxPosX >= MinPosX && MaxPosY >= MinPosY)
+	else
 	{
-		//방 위치 랜덤 결정
-		int RoomX = MinPosX + FastRandomRange(MaxPosX - MinPosX + 1); //방의 크기만큼 랜덤 위치(+1은 최대값 포함을 위해)
-		int RoomY = MinPosY + FastRandomRange(MaxPosY - MinPosY + 1);
-		//방 할당
-		// RegionStartX/RegionSize, RegionStartY/RegionSize 는 몇 번째 구역인지 나타냄
-		AllocateRoom(RoomX, RoomY, RoomWidth, RoomHeight, RegX, RegY);
+		//재귀적으로 자식 노드에 방 생성
+		CreateRooms(InNode->Left, InMap, MinRoomSize);
+		CreateRooms(InNode->Right, InMap, MinRoomSize);
 	}
 }
 
-const Room* BSPGenerator::FindRoomInRegion(int RegX, int RegY) const
+void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
 {
-	//람다식과 find_if를 이용해 특정 구역에 속하는 방 탐색
-	auto it = find_if(Rooms.begin(), Rooms.end(),
-		// 캡처 리스트에 RegX, RegY를 넣어 람다식 내부에서 사용 가능
-		[RegX, RegY](const Room& room)
-		{
-			//현재 room의 구역과 찾고자 하는 (RegX, RegY)가 같은 면 true 반환
-			int RoomRegX = room.RegionX;
-			int RoomRegY = room.RegionY;
-			return RoomRegX == RegX && RoomRegY == RegY;
-		});
-	//찾았으면 포인터 반환, 못 찾았으면 nullptr 반환
-	return (it != Rooms.end()) ? &(*it) : nullptr;
-}
+	if (!InNode || InNode->IsLeaf) return;
 
-void BSPGenerator::ConnectRooms(Map& InMap, const Room& InRoom1, const Room& InRoom2)
-{
-	Point center1 = InRoom1.GetCenter();
-	Point center2 = InRoom2.GetCenter();
+	//자식 노드들에 대해 복도 생성
+	CreateCorridors(InNode->Left, InMap);
+	CreateCorridors(InNode->Right, InMap);
 
-	CreateCorridors(InMap, center1.x, center1.y, center2.x, center2.y);
-}
-
-void BSPGenerator::CreateCorridors(Map& InMap, int InX1, int InY1, int InX2, int InY2)
-{
-	int CurrentX = InX1;
-	int CurrentY = InY1;
-
-	while (CurrentX != InX2)
+	//좌우 자식의 방들을 연결
+	if (InNode->Left && InNode->Right)
 	{
-		if (InMap.IsWall(CurrentX, CurrentY))
-		{
-			InMap.SetCellType(CurrentX, CurrentY, CellType::Floor);
-		}
-		CurrentX += (CurrentX > InX2) ? -1 : 1;
+		ConnectRooms(InNode->Left, InNode->Right, InMap);
 	}
-	while (CurrentY != InY2)
+}
+
+void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap)
+{
+	Point Center1 = GetRoomCenter(InRoom1);
+	Point Center2 = GetRoomCenter(InRoom2);
+
+	if (rng() % 2)
 	{
-		if (InMap.IsWall(CurrentX, CurrentY))
-		{
-			InMap.SetCellType(CurrentX, CurrentY, CellType::Floor);
-		}
-		CurrentY += (CurrentY > InY2) ? -1 : 1;
+		//수평-수직 순서의 L자형 복도
+		int StartX = min(Center1.x, Center2.x);
+		int EndX = max(Center1.x, Center2.x);
+		for (int x = StartX;)
+
 	}
-	
+
+
 }
 
-void BSPGenerator::CacheMapInfo(const Map& InMap)
+Point BSPGenerator::GetRoomCenter(const BSPNode* InNode) const
 {
-	MapSize = InMap.GetMapSize();
-	RegionSize = InMap.GetRegionSize();
-	NumRegions = InMap.GetMaxNumRegions();
-}
+	if (!InNode) return Point(0, 0);
 
-float BSPGenerator::GetDistanceBetweenRooms(const Room& room1, const Room& room2) const
-{
-	Point center1 = room1.GetCenter();
-	Point center2 = room2.GetCenter();
-
-	int dx = center2.x - center1.x;
-	int dy = center2.y - center1.y;
-
-	return sqrt(dx*dx + dy*dy);
-}
-
-vector<Point> BSPGenerator::GetAllRoomCenters() const
-{
-	vector<Point> centers;
-	centers.reserve(Rooms.size()); //방의 갯수 만큼 메모리 예약
-
-	for (const auto& room : Rooms)
+	if (InNode->IsLeaf)
 	{
-		centers.push_back(room.GetCenter());
+		return Point(InNode->x + InNode->Width / 2, InNode->y + InNode->Height / 2);
 	}
-	return centers;
+	return Point();
 }
+
+

@@ -15,7 +15,7 @@ public:
 	{
 		CurrentMap = new Map();
 		//자주 사용하고 메모리를 적게 먹는 데이터 캐싱
-		MapSize = CurrentMap->GetMapSize();
+		MapLength = CurrentMap->GetMapLength();
 		RegionSize = CurrentMap->GetRegionSize();
 
 		//BSPGenerator로 Map 맵 구조 변경
@@ -39,7 +39,7 @@ private:
 	//맵의 한 부분 출력(디버그용)
 	void PrintRegionMap() const;
 
-	int MapSize;
+	int MapLength;
 	int RegionSize;
 	int TokenCount;
 

@@ -9,7 +9,7 @@ class Map
 public:
 	Map() 
 	{
-		MapData.resize(MapSize, vector<CellType>(MapSize, CellType::Wall));
+		MapData.resize(MapLength, vector<CellType>(MapLength, CellType::Wall));
 	}
 
 	//맵 데이터 접근
@@ -44,10 +44,10 @@ public:
 	}
 	inline bool IsValidPosition(int InX, int InY) const
 	{
-		return InX >= 0 && InX < MapSize && InY >= 0 && InY < MapSize;
+		return InX >= 0 && InX < MapLength && InY >= 0 && InY < MapLength;
 	}
 
-	inline int GetMapSize() const { return MapSize; }
+	inline int GetMapLength() const { return MapLength; }
 	inline int GetRegionSize() const { return RegionSize; }
 	inline int GetMaxNumRegions() const { return MaxNumRegions; }
 
@@ -66,9 +66,9 @@ private:
 	//벽, 통로, (아이템, 탈출구) 위치 정보 보관
 	//특정 좌표의 셀타입 확인/설정 메서드
 	//맵 상태 조희 기능 (isWall, isEmpty, hasItem)
-	static const int MapSize = 64;
+	static const int MapLength = 64;
 	static const int RegionSize = 8;
-	static const int MaxNumRegions = (MapSize / RegionSize) * (MapSize / RegionSize); //64/8=8 -> 8*8=64 가로*세로
+	static const int MaxNumRegions = (MapLength / RegionSize) * (MapLength / RegionSize); //64/8=8 -> 8*8=64 가로*세로
 	vector<vector<CellType>> MapData;
 };
 

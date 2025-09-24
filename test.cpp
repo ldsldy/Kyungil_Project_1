@@ -6,7 +6,7 @@
 //다른 클래스로 뿌린다.
 int main()
 {
-	Map testMap(25, 25);
+	Map testMap;
 	testMap.Init();
 	testMap.PrintTestMap();
 	testMap.PrintRegionMap();

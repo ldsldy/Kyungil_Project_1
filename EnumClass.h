@@ -3,7 +3,16 @@
 enum class CellType
 {
 	Wall,
-	Empty,
+	Floor,
 	Item,
 	Exit
+};
+
+enum class Direction
+{
+	Up,
+	Down,
+	Left,
+	Right,
+	Default
 };

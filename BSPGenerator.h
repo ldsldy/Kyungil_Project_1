@@ -3,10 +3,12 @@
 #include <vector>
 #include <ctime>
 #include <algorithm>
+#include "Map.h"
 #include "Point.h"
 using namespace std;
 
-class Map; //전방 선언
+// map -> bsp -> mapmanager -> game manager
+Map InMap; //전방 선언
 
 struct Room
 {
@@ -120,16 +122,42 @@ private:
 	/// <param name="RegY"></param>
 	/// <returns></returns>
 	const Room* FindRoomInRegion(int RegX, int RegY) const;
-public:
-	BSPGenerator()
-	{
-		//시드 초기화
-		rngState = static_cast<int>(time(nullptr));
 
-		//메모리 사전 할당
-		Nodes.reserve(MAX_BSP_NODES);
-		Rooms.reserve(MAX_TOTAL_ROOMS);
-	}
+	/// <summary>
+	/// 두 방을 연결하는 통로 생성
+	/// </summary>
+	/// <param name="InMap">정보를 기록할 맵</param>
+	/// <param name="InRoom1">연결할 방 1</param>
+	/// <param name="InRoom2">연결될 방 2</param>
+	void ConnectRooms(Map& InMap, const Room& InRoom1, const Room& InRoom2);
+
+	/// <summary>
+	/// 두 좌표를 연결하는 통로 생성
+	/// </summary>
+	/// <param name="InMap">통로를 생성할 맵</param>
+	/// <param name="x1">좌표1의 x값</param>
+	/// <param name="y1">좌표1의 y값</param>
+	/// <param name="x2">좌표2의 x값</param>
+	/// <param name="y2">좌표2의 y값</param>
+	void CreateCorridors(Map& InMap, int x1, int y1, int x2, int y2);
+
+	/// <summary>
+	/// 맵 정보 캐싱
+	/// </summary>
+	/// <param name="InMap">정보를 받아올 맵</param>
+	void CacheMapInfo(const Map& InMap);
+
+	//void DrawRooms(Map& map) const;
+
+public:
+	/// <summary>
+	/// 두 방 사이의 거리 계산 함수
+	/// </summary>
+	float GetDistanceBetweenRooms(const Room& room1, const Room& room2) const;
+
+	/// <summary>
+	/// 모든 방의 중심점 좌표를 벡터 형태로 반환
+	/// </summary>
+	vector<Point> GetAllRoomCenters() const;
 
 };
-

@@ -11,7 +11,7 @@ int main()
 	//甘 概聪历 积己
 	MapManager MyMapManager;
 	//甘 积己
-	MyMapManager.GenerateMap(6);
+	MyMapManager.GenerateBSPMap(6);
 	//甘 免仿
 	MyMapManager.PrintMap();
 

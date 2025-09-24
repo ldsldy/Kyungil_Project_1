@@ -1,9 +1,11 @@
 #include "MapManager.h"
 #include <iostream>
 
-void MapManager::GenerateMap(unsigned int MinRoomSize)
+void MapManager::GenerateBSPMap(unsigned int MinRoomSize)
 {
-	BSPGen->GenerateMap(*CurrentMap, MinRoomSize);
+	ManagerMap = new Map();
+	BSPGen = new BSPGenerator();
+	BSPGen->GenerateMap(*ManagerMap, MinRoomSize);
 }
 
 void MapManager::PrintMap() const
@@ -12,7 +14,7 @@ void MapManager::PrintMap() const
 	{
 		for(int x=0; x<MapLength; x++)
 		{
-			switch (CurrentMap->GetCellType(x, y))
+			switch (ManagerMap->GetCellType(x, y))
 			{
 			case CellType::Wall: cout << "■"; break;
 			case CellType::Floor: cout << " "; break;
@@ -47,7 +49,7 @@ void MapManager::PrintTestMap() const
 				cout << "|";
 			}
 
-			switch (CurrentMap->GetCellType(x, y))
+			switch (ManagerMap->GetCellType(x, y))
 			{
 			case CellType::Wall: cout << "■"; break;
 			case CellType::Floor: cout << "□"; break;
@@ -83,7 +85,7 @@ void MapManager::PrintMapInfo() const
 	{
 		for (int x = 0; x < MapLength; x++)
 		{
-			switch (CurrentMap->GetCellType(x, y))
+			switch (ManagerMap->GetCellType(x, y))
 			{
 			case CellType::Wall: WallCount++; break;
 			case CellType::Floor: FloorCount++; break;
@@ -100,4 +102,11 @@ void MapManager::PrintMapInfo() const
 	std::cout << "아이템: " << ItemCount << "개" << std::endl;
 	std::cout << "출구: " << ExitCount << "개" << std::endl;
 	std::cout << "===============\n";
+}
+
+void MapManager::DataCaching()
+{
+	MapLength = ManagerMap->GetMapLength();
+	RegionSize = ManagerMap->GetRegionSize();
+	MapManagerToken = 0;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <random>
 #include "Point.h"
 
@@ -39,12 +40,6 @@ struct BSPNode
 	BSPNode(int InX, int InY, int InWidth, int InHeight)
 		:x(InX), y(InY), Width(InWidth), Height(InHeight), Left(nullptr), Right(nullptr), IsLeaf(true){}
 
-	~BSPNode()
-	{
-		delete Left;
-		delete Right;
-	}
-
 	inline Point GetRoomCenter() const 
 	{
 		if (IsLeaf && ContainedRoom.IsValid())
@@ -59,13 +54,14 @@ struct BSPNode
 			if (Right && Right->GetRoomCenter().x !=0)
 				return Right->GetRoomCenter();
 		}
+		return Point(-1, -1);
 	}
 };
 
 class BSPGenerator
 {
 public:
-	BSPGenerator() : Root(nullptr), rng(random_device{}()) {}
+	BSPGenerator() :Root(nullptr), rng(random_device{}()) {}
 	~BSPGenerator()
 	{
 		delete Root;
@@ -77,6 +73,7 @@ public:
 private:
 	BSPNode* Root;
 	mt19937 rng;
+	bool bIsInitialized;
 
 	//BSP 트리 분할
 	void SplitNode(BSPNode* InNode, unsigned int MinRoomSize);

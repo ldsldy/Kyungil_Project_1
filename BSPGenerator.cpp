@@ -69,7 +69,7 @@ void BSPGenerator::ConnectRooms(Map& InMap, const Room& InRoom1, const Room& InR
 	Point center1 = InRoom1.GetCenter();
 	Point center2 = InRoom2.GetCenter();
 
-	CreateCorridors(InMap, center1.x, center1.y, center2.x, center2.y)
+	CreateCorridors(InMap, center1.x, center1.y, center2.x, center2.y);
 }
 
 void BSPGenerator::CreateCorridors(Map& InMap, int InX1, int InY1, int InX2, int InY2)

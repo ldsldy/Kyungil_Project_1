@@ -8,6 +8,26 @@ using namespace std;
 
 Map InMap; //전방 선언
 
+struct Room
+{
+	int x, y;
+	int Width, Height;
+
+	Room() : x(0), y(0), Width(0), Height(0) {}
+	Room(int InX, int InY, int InWidth, int InHeight)
+		:x(InX), y(InY), Width(InWidth), Height(InHeight) {}
+
+	inline Point GetCenter() const
+	{
+		return Point(x + Width / 2, y + Height / 2);
+	}
+
+	inline bool IsValid() const
+	{
+		return Width > 0 && Height > 0;
+	}
+};
+
 //BSP노드 - 인덱스 기반 관리 유지 
 struct BSPNode
 {
@@ -15,6 +35,7 @@ struct BSPNode
 	BSPNode* Left;
 	BSPNode* Right;
 	bool IsLeaf;
+	Room ContainedRoom;
 
 	BSPNode(int InX, int InY, int InWidth, int InHeight)
 		:x(InX), y(InY), Width(InWidth), Height(InHeight), Left(nullptr), Right(nullptr), IsLeaf(true){}
@@ -23,6 +44,22 @@ struct BSPNode
 	{
 		delete Left;
 		delete Right;
+	}
+
+	inline Point GetRoomCenter() const 
+	{
+		if (IsLeaf && ContainedRoom.IsValid())
+		{
+			return ContainedRoom.GetCenter();
+		}
+		//리프 노드가 아니면 자식 노드에서 방 중심점 찾기
+		else if (!IsLeaf)
+		{
+			if (Left && Left->GetRoomCenter().x != 0)
+				return Left->GetRoomCenter();
+			if (Right && Right->GetRoomCenter().x !=0)
+				return Right->GetRoomCenter();
+		}
 	}
 };
 
@@ -36,7 +73,7 @@ public:
 	}
 
 	//Map 클래스에서 벡터를 받아 BSP 트리 생성 및 맵 생성
-	void GenerateMap(Map& InMap, unsigned int MinRoomSize = 0);
+	void GenerateMap(Map& InMap, unsigned int MinRoomSize = 6);
 
 private:
 	BSPNode* Root;

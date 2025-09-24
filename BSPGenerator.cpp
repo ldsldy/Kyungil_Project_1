@@ -82,6 +82,9 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 		//방의 위치는 노드 내부에서 랜덤 (벽 1칸 두께 고려)
 		int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
 		int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
+		
+		//노드에 방 정보 저장
+		InNode->ContainedRoom = Room(RoomX, RoomY, RoomWidth, RoomHeight);
 
 		//맵에 방 생성
 		for (int y = RoomY; y < RoomY + RoomHeight; y++)
@@ -94,10 +97,6 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 				}
 			}
 		}
-		InNode->x = RoomX;
-		InNode->y = RoomY;
-		InNode->Width = RoomWidth;
-		InNode->Height = RoomHeight;
 	}
 	else
 	{
@@ -124,30 +123,48 @@ void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
 
 void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap)
 {
-	Point Center1 = GetRoomCenter(InRoom1);
-	Point Center2 = GetRoomCenter(InRoom2);
+	Point Center1 = InRoom1->GetRoomCenter();
+	Point Center2 = InRoom2->GetRoomCenter();
 
 	if (rng() % 2)
 	{
 		//수평-수직 순서의 L자형 복도
 		int StartX = min(Center1.x, Center2.x);
 		int EndX = max(Center1.x, Center2.x);
-		for (int x = StartX;)
+		//수평 복도
+		for (int x = StartX; x <= EndX; x++)
+		{
+			if (InMap.IsValidPosition(x, Center1.y))
+				InMap.SetCellType(x, Center1.y, CellType::Floor);
+		}
 
+		//수직 복도
+		int StartY = min(Center1.y, Center2.y);
+		int EndY = max(Center1.y, Center2.y);
+		for (int y = StartY; y <= EndY; y++)
+		{
+			if (InMap.IsValidPosition(Center2.x, y))
+				InMap.SetCellType(Center2.x, y, CellType::Floor);
+		}
 	}
-
-
-}
-
-Point BSPGenerator::GetRoomCenter(const BSPNode* InNode) const
-{
-	if (!InNode) return Point(0, 0);
-
-	if (InNode->IsLeaf)
+	else
 	{
-		return Point(InNode->x + InNode->Width / 2, InNode->y + InNode->Height / 2);
+		//수직-수평 순서의 L자형 복도
+		int StartY = min(Center1.y, Center2.y);
+		int EndY = max(Center1.y, Center2.y);
+		//수직 복도
+		for (int y = StartY; y <= EndY; y++)
+		{
+			if (InMap.IsValidPosition(Center1.x, y))
+				InMap.SetCellType(Center1.x, y, CellType::Floor);
+		}
+		//수평 복도
+		int StartX = min(Center1.x, Center2.x);
+		int EndX = max(Center1.x, Center2.x);
+		for (int x = StartX; x <= EndX; x++)
+		{
+			if (InMap.IsValidPosition(x, Center2.y))
+				InMap.SetCellType(x, Center2.y, CellType::Floor);
+		}
 	}
-	return Point();
 }
-
-

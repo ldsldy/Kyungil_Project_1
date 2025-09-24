@@ -1,4 +1,4 @@
-#include "Map.h"
+#include "MapManager.h"
 //단일 책임
 //게임 매니저를 통하자
 
@@ -7,9 +7,6 @@
 int main()
 {
 	Map testMap;
-	testMap.Init();
-	testMap.PrintTestMap();
-	testMap.PrintRegionMap();
 
 	return 0;
 }

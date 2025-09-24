@@ -1,9 +1,8 @@
 #pragma once
 #include "Point.h"
 #include "EnumClass.h"
-#include "GameManger.h"
 
-GameManager* CurrentGameManager;
+extern class GameManager;
 
 class Player
 {
@@ -33,5 +32,6 @@ private:
 	//현재 위치
 	Point PlayerPos;
 	int WalkSpeed; //이동 속도
+	GameManager* CurrentGameManager;
 };
 

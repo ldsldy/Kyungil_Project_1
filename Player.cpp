@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <iostream>
 #include <conio.h>
+#include "GameManager.h"
 
 using namespace std;
 

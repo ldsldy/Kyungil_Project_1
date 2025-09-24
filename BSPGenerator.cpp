@@ -1,12 +1,17 @@
 #include "BSPGenerator.h"
 #include <algorithm>
+#include "Map.h"
 
 void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize)
 {
 	InMap.Init();
 
 	//루트 노드 생성
-	delete Root;
+	if (Root != nullptr) {
+		delete Root;
+		Root = nullptr;
+	}
+
 	Root = new BSPNode(0, 0, InMap.GetMapLength(), InMap.GetMapLength());
 	
 	//BSP 트리 분할

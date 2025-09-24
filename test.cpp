@@ -1,4 +1,5 @@
 #include "MapManager.h"
+#include <iostream>
 //단일 책임
 //게임 매니저를 통하자
 
@@ -6,7 +7,13 @@
 //다른 클래스로 뿌린다.
 int main()
 {
-	Map testMap;
+	cout << "====맵 생성기 테스트==========\n";
+	//맵 매니저 생성
+	MapManager MyMapManager;
+	//맵 생성
+	MyMapManager.GenerateMap(6);
+	//맵 출력
+	MyMapManager.PrintMap();
 
 	return 0;
 }

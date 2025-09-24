@@ -1,4 +1,23 @@
-#include "GameManger.h"
+#include "GameManager.h"
+#include "Player.h"
+#include "MapManager.h"
+#include "EnemyManager.h"
+#include "ItemManager.h"
+
+GameManager::GameManager()
+{
+	UserPlayer = new Player;
+	CurrentMapManager = new MapManager;
+	CurrentEnemyManager = new EnemyManager;
+	CurrentItemManager = new ItemManager;
+}
+GameManager::~GameManager()
+{
+	delete UserPlayer;
+	delete CurrentMapManager;
+	delete CurrentEnemyManager;
+	delete CurrentItemManager;
+}
 
 void GameManager::Run()
 {
@@ -36,4 +55,10 @@ bool GameManager::CanPlayerMove()
 	{
 		return true;
 	}
+}
+
+void GameManager::Update()
+{
+	UserDirection = UserPlayer->GetMoveDirection();
+	UserPos = UserPlayer->GetPlayerPose();
 }

@@ -1,6 +1,30 @@
 #include "MapManager.h"
 #include <iostream>
 
+void MapManager::GenerateMap(unsigned int MinRoomSize)
+{
+	BSPGen->GenerateMap(*CurrentMap, MinRoomSize);
+}
+
+void MapManager::PrintMap() const
+{
+	for(int y=0; y<MapLength; y++)
+	{
+		for(int x=0; x<MapLength; x++)
+		{
+			switch (CurrentMap->GetCellType(x, y))
+			{
+			case CellType::Wall: cout << "¡á"; break;
+			case CellType::Floor: cout << " "; break;
+			case CellType::Item: cout << "¡Ú"; break;
+			case CellType::Exit: cout << "E"; break;
+			default:cout << "?"; break;
+			}
+		}
+		cout << endl;
+	}
+}
+
 void MapManager::PrintTestMap() const
 {
 	cout << "Map (" << MapLength << "x" << MapLength << "):\n";
@@ -23,7 +47,7 @@ void MapManager::PrintTestMap() const
 				cout << "|";
 			}
 
-			switch (InMap.GetCellType(x, y))
+			switch (CurrentMap->GetCellType(x, y))
 			{
 			case CellType::Wall: cout << "¡á"; break;
 			case CellType::Floor: cout << "¡à"; break;
@@ -49,4 +73,31 @@ void MapManager::PrintRegionMap() const
 		cout << "\n";
 	}
 	cout << endl;
+}
+
+void MapManager::PrintMapInfo() const
+{
+	int WallCount = 0, FloorCount = 0, ItemCount = 0, ExitCount = 0;
+
+	for (int y = 0; y < MapLength; y++)
+	{
+		for (int x = 0; x < MapLength; x++)
+		{
+			switch (CurrentMap->GetCellType(x, y))
+			{
+			case CellType::Wall: WallCount++; break;
+			case CellType::Floor: FloorCount++; break;
+			case CellType::Item: ItemCount++; break;
+			case CellType::Exit: ExitCount++; break;
+			}
+		}
+	}
+
+	std::cout << "\n=== ¸Ê Åë°è ===\n";
+	std::cout << "ÃÑ ¼¿ ¼ö: " << MapLength * MapLength << std::endl;
+	std::cout << "º®: " << WallCount << "°³" << std::endl;
+	std::cout << "ºó °ø°£: " << FloorCount << "°³" << std::endl;
+	std::cout << "¾ÆÀÌÅÛ: " << ItemCount << "°³" << std::endl;
+	std::cout << "Ãâ±¸: " << ExitCount << "°³" << std::endl;
+	std::cout << "===============\n";
 }

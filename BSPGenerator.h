@@ -1,12 +1,11 @@
 #pragma once
 #include <vector>
 #include <random>
-#include "Map.h"
 #include "Point.h"
 
 using namespace std;
 
-Map InMap; //전방 선언
+extern class Map;
 
 struct Room
 {
@@ -93,6 +92,8 @@ private:
 
 	//구역의 중심점 찾기
 	Point GetRoomCenter(const BSPNode* InNode) const;
+
+	Map* InMap;
 };
 
 

@@ -7,7 +7,7 @@ Map::Map(int InWidth, int InHeight)
 
 void Map::SetCell(int InX, int InY, CellType Type)
 {
-	if (IsValidPostion(InX,InY))
+	if (IsValidPosition(InX,InY))
 	{
 		MapData[InY][InX] == Type;
 	}
@@ -15,14 +15,14 @@ void Map::SetCell(int InX, int InY, CellType Type)
 
 CellType Map::GetCell(int InX, int InY) const
 {
-	if (!IsValidPostion())
+	if (!IsValidPosition())
 		return CellType::Wall;
 	return MapData[InY][InX];
 }
 
 bool Map::IsWalkable(int InX, int InY) const
 {
-	if (!IsValidPostion(InX, InY))
+	if (!IsValidPosition(InX, InY))
 		return false;
 	
 	CellType Cell = GetCell(InX, InY);
@@ -30,7 +30,7 @@ bool Map::IsWalkable(int InX, int InY) const
 		|| Cell == CellType::Floor||Cell==CellType::Token);
 }
 
-bool Map::IsValidPostion(int InX, int InY) const
+bool Map::IsValidPosition(int InX, int InY) const
 {
 	return InX >= 0 && InX < Width && InY >= 0 && InY < Height;
 }

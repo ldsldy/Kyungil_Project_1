@@ -1,7 +1,6 @@
 #pragma once
 #include "Map.h"
 #include <random>
-//#include <memory>
 
 
 struct Room
@@ -31,7 +30,6 @@ struct Room
 	//}
 };
 
-//BSP노드 - 인덱스 기반 관리 유지 
 struct BSPNode
 {
 	int x, y, Width, Height; //맵 좌표, 크기
@@ -43,64 +41,66 @@ struct BSPNode
 	BSPNode(int InX, int InY, int InWidth, int InHeight)
 		:x(InX), y(InY), Width(InWidth), Height(InHeight), Left(nullptr), Right(nullptr), IsLeaf(true){}
 
-	//inline Point GetRoomCenter() const 
-	//{
-	//	//리프 노드이고 방이 유효하면 방 중심점 반환
-	//	if (IsLeaf && ContainedRoom.IsValid())
-	//	{
-	//		return ContainedRoom.GetCenter();
-	//	}
-	//	//리프 노드가 아니면 자식 노드에서 방 중심점 찾기
-	//	else if (!IsLeaf)
-	//	{
-	//		if (Left && Left->GetRoomCenter().x != 0)
-	//			return Left->GetRoomCenter();
-	//		if (Right && Right->GetRoomCenter().x !=0)
-	//			return Right->GetRoomCenter();
-	//	}
-	//	//리프 노드이지만 방이 없다.
-	//	return Point(0, 0);
-	//}
+	~BSPNode()
+	{
+		delete Left;
+		delete Right;
+	}
+
+	Point GetRoomCenter() const
+	{
+		//리프 노드이고 방이 유효하면 방 중심점 반환
+		if (IsLeaf && ContainedRoom.IsValid())
+		{
+			return ContainedRoom.GetCenter();
+		}
+		//리프 노드가 아니면 자식 노드에서 방 중심점 찾기
+		else if (!IsLeaf)
+		{
+			if (Left && Left->GetRoomCenter().x != 0)
+				return Left->GetRoomCenter();
+			if (Right && Right->GetRoomCenter().x !=0)
+				return Right->GetRoomCenter();
+		}
+		//리프 노드이지만 방이 없다.
+		return Point(0, 0);
+	}
 };
 
 class BSPGenerator:public Map
 {
 private:
 	mt19937 rng;
-
-protected:
 	BSPNode* Root;
 	vector<Room> LeafRooms;
-	Point PlayerSpawn;
-	//Point ExitPoint;
-	//vector<Point> EnemySpawnPositions;
-	//vector<Point> TokenSpawnPositions;
 
 public:
-	BSPGenerator() : rng(random_device{}()) {}
-	~BSPGenerator()
-	{
-		delete Root;
-		cout << "BSP Destructed\n";
-	}
+	BSPGenerator() : rng(random_device{}()), Root(nullptr) {}
+	~BSPGenerator(){ delete Root; }
 
 	//Map 클래스에서 벡터를 받아 BSP 트리 생성 및 맵 생성
 	void GenerateMap(Map& InMap, unsigned int MinRoomSize = 10, int MaxDepth = 5);
 
-	inline Point GetPlayerSpawn() const { return PlayerSpawn; }
+	//플레이어 시작 위치는 첫번쨰 리프 노드 방의 중심
+	Point GetPlayerSpawn() const;
+	vector<Point> GetTokenSpawns(int InCount) const;
+	Point GetEnemySpawn() const;
+	Point GetExitSpawn() const;
 
-protected:
+private:
 	//BSP 트리 분할
-	void SplitNode(BSPNode* InNode, unsigned int MinRoomSize);
+	// InNode: 분할할 노드, MinRoomSize: 방의 최소 크기, InDepth: 현재 깊이, MaxDepth: 최대 깊이
+	void SplitNode(BSPNode* InNode, unsigned int MinRoomSize, int InDepth, int MaxDepth);
 
 	// 방 생성
-	void CreateRooms(BSPNode* InNode, unsigned int MinRoomSize);
+	void CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoomSize);
 
 	//복도 생성
-	void CreateCorridors(BSPNode* InNodes);
+	void CreateCorridors(BSPNode* InNodes, Map& InMap);
 
-	////두 방을 연결하는 복도 생성
-	//void ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2);
+	//두 방을 연결하는 복도 생성
+	// InCenter1, InCenter2: 연결할 두 방의 노드
+	void ConnectRooms(const Point& InCenter1, const Point& InCenter2, Map& InMap);
 
 	////리프 노드의 방들을 벡터에 저장
 	//void GetLeafRoomsVector(vector<Room>& InLeafRooms);

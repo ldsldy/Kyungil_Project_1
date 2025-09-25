@@ -25,12 +25,12 @@ public:
 	//갈 수 있는 위치인지 확인
 	bool IsWalkable(int InX, int InY) const;
 	//맵 안인지 확인
-	bool IsValidPostion(int InX, int InY) const;
+	bool IsValidPosition(int InX, int InY) const;
 	bool IsWall(int InX, int InY) const;
 
 	//맵 가로, 세로 반환
-	inline int GetWidth() const {return Width};
-	inline int GetHeight() const {return Height};
+	inline int GetWidth() const { return Width; }
+	inline int GetHeight() const { return Height; }
 
 	// 방 정보
 	inline vector<Point> GetRoomCenters() const { return RoomCenters; }

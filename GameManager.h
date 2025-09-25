@@ -6,6 +6,8 @@ class Player;
 class MapManager;
 class EnemyManager;
 
+//참조 매개변수는 복사 방지용, const는 값 보호용, 두개를 함께 쓰는게 좋음
+
 class GameManager
 {
 public:

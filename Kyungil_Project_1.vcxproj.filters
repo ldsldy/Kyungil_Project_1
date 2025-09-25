@@ -39,9 +39,6 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Map</Filter>
     </ClCompile>
@@ -62,14 +59,8 @@
     <ClInclude Include="Enemy.h">
       <Filter>Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyManager.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="GameManger.h">
-      <Filter>GameManager</Filter>
     </ClInclude>
     <ClInclude Include="MapManager.h">
       <Filter>Map</Filter>
@@ -82,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="Point.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>GameManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

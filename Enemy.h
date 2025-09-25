@@ -1,39 +1,33 @@
 #pragma once
+#include "Point.h"
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+class Map;
+
 class Enemy
 {
-public:
-	//순회 이동
-	//적 발견시 추적 이동(플레이어 위치)
-	//스턴 실시(기절 시간)
-	
-	//상태 업데이트
-	//얻은 위치로 이동(Position newPos)
-
-	//추적 중인지 확인
-	//경로 표시 디버깅 모드
-	
-	//현재 포지션 반환
-	//현재 상태 반환
-	
-	//충돌 감지(플레이어에?)
-	
 private:
-	//위치, 
-	//상태(추적, 기절, 순회 등),
-	//속도(기본 속도, 달리기?(고민))
-	//추적 범위(기본, 토큰이 다 사라지면 맵 전체)
-	//경로 저장 벡터(순회, 추적)
-	//스턴 시간
+	Point Position;
 
-	//bool 플레이어가 감지 범위 안에 있는지 확인
+	vector<Point> BFSFindPath(const Point& InStart, const Point& InTarget, Map& InMap);
+	
+
+public:
+	Enemy() :Position(0, 0) {}
+
+	inline Point GetPosition() const { return Position; } const
+	inline void SetPosition(const Point& InPos) { Position = InPos; }
+
+	void Update(const Point& InPlayerPos, Map& InMap);
 };
 
-//적 캐릭터
-	//생성 위치는 MapManager에서 결정
-	//맵 내에서 랜덤으로 이동
-	//플레이어가 일정 범위 근접 시 추적
-	//플레이어와 부딪히면 게임 오버
-	//플레이어가 토큰을 전부 획득하면 맵 전체를 범위로 추척
-	//플레이어가 아이템을 먹었을 때 상호작용(일정시간 정지 등)
+//추적 범위(기본, 토큰이 다 사라지면 맵 전체) <= 추가 
+//플레이어와 달리기가 같아서 한번 추적하면 계속 추적하니 일정 셀을 움직이면 잠시 휴식	<= 추가
+//적 발견(플레이어가 범위를 가진게 좋은가? 고민 좀)시 추적 이동(플레이어 위치)
+//칸마다 추적하면 너무 부담되니 플레이어가 일정 범위 안에 있는지만 체크하고
+//일정 시간마다 다시 업데이트
 
-	//테스트모드: 추적 경로 표시, 플레이어를 발견했을 떄 알림
+//경로 표시 디버깅 모드

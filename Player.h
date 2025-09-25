@@ -2,33 +2,38 @@
 #include "Point.h"
 #include "EnumClass.h"
 
-extern class GameManager;
+class Map;
 
 class Player
 {
-public:
-	Player(){
-		PlayerPos = (0, 0);
-	}
+private:
+	//플레이어 위치
+	Point Position;
 
-	//게임 매니저가 플레이어 위치를 요청할 때
-	inline Point GetPlayerPose() const { return PlayerPos; }
-	inline Point GetPlayerX() const { return PlayerPos.x; }
-	inline Point GetPlayerY() const { return PlayerPos.y; }
-	/// <summary>
-	/// 이동할 방향을 결정하는 함수 => 실제 이동 함수로 전달
+public:
+	Player():Position(0,0){}
+
+	inline Point GetPosition() const { return Position; }
+	inline void SetPosition(const Point& InPos) { Position = InPos; }
+	
+	// <summary>
+	/// 플레이어의 이동 방향을 입력받아 반환하는 함수
 	/// </summary>
 	/// <returns>이동할 방향의 Enum</returns>
-	Direction GetMoveDirection();
+	Direction GetInputDirection();
 
-	inline void SetPositionX(int InX) { PlayerPos.x = InX; }
-	inline void SetPositionY(int InY) { PlayerPos.y = InY; }
-	inline void SetPosition(Point InPos) { PlayerPos = InPos; }
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="InDirection"></param>
+	/// <param name="InMap"></param>
+	/// <returns></returns>
+	bool Move(Direction InDirection, Map& InMap);
 
-private:
-	//현재 위치
-	Point PlayerPos;
-	int WalkSpeed;	//이동 속도
-	GameManager* CurrentGameManager;
+	bool DetectedTokenCollision(Map& InMap);
 };
 
+//자기 위치를 맵에 뿌리고
+//이동 방향을 입력받아 이동
+//토큰 충돌 감지
+//출구 충돌 감지

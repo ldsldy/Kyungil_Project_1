@@ -28,28 +28,3 @@ Direction Player::GetMoveDirection()
 	}
 	return Direction::Default;
 }
-
-void Player::Move(Direction MoveDirection)
-{
-	if (CurrentGameManager->CanPlayerMove())
-	{
-		if (MoveDirection == Direction::Up)
-			switch (MoveDirection)
-			{
-			case Direction::Up:
-				PlayerPos.y = PlayerPos.y - 1;
-				break;
-			case Direction::Down:
-				PlayerPos.y = PlayerPos.y + 1;
-				break;
-			case Direction::Left:
-				PlayerPos.x = PlayerPos.x - 1;
-				break;
-			case Direction::Right:
-				PlayerPos.x = PlayerPos.x + 1;
-				break;
-			case Direction::Default:
-				break;
-			}
-	}
-}

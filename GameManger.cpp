@@ -3,49 +3,72 @@
 #include "MapManager.h"
 #include "EnemyManager.h"
 
+class GameManager;
+
 GameManager::GameManager()
 {
-	UserPlayer = new Player;
+	CurrentPlayer = new Player;
 	CurrentMapManager = new MapManager;
 	CurrentEnemyManager = new EnemyManager;
 }
 GameManager::~GameManager()
 {
-	delete UserPlayer;
+	delete CurrentPlayer;
 	delete CurrentMapManager;
 	delete CurrentEnemyManager;
 }
 
 void GameManager::Run()
 {
-	//Update();
-	CurrentMapManager->PrintMap();
+	InitGame();
+
+	while (true) 
+	{
+		CurrentMapManager->PrintMap();
+		PlayerMove();
+	}
 }
 
-bool GameManager::CanPlayerMove()
+void GameManager::InitGame()
+{
+	CurrentPlayer->SetPosition(GetPlayerSpawnFromMM());
+}
+
+Point GameManager::GetPlayerSpawnFromMM() const
+{
+	return CurrentMapManager->GetPlayerSpawnFromBSP();
+}
+
+Point GameManager::GetCurrentPlayerPos() const
+{
+	cout << "PlayerPos: (" << endl;
+	return CurrentPlayer->GetPlayerPose();
+}
+
+bool GameManager::CanPlayerMove(Direction InDirection)
 {
 	// 플레이어가 가고 싶은 좌표를 미리 확인할 좌표 생성
-	Point PrecUserPos = UserPos;
-	if (UserDirection == Direction::Up)
+	Point PrecPlayerPos = CurrentPlayer->GetPlayerPose();
+	if (InDirection == Direction::Up)
 	{
-		PrecUserPos.y = UserPos.y - 1;
+		PrecPlayerPos.y = PrecPlayerPos.y - 1;
 	}
-	if (UserDirection == Direction::Down)
+	if (InDirection == Direction::Down)
 	{
-		PrecUserPos.y = UserPos.y + 1;
+		PrecPlayerPos.y = PrecPlayerPos.y + 1;
 	}
-	if (UserDirection == Direction::Left)
+	if (InDirection == Direction::Left)
 	{
-		PrecUserPos.x = UserPos.x - 1;
+		PrecPlayerPos.x = PrecPlayerPos.x - 1;
 	}
-	if (UserDirection == Direction::Right)
+	if (InDirection == Direction::Right)
 	{
-		PrecUserPos.x = UserPos.x + 1;
+		PrecPlayerPos.x = PrecPlayerPos.x + 1;
 	}
 	
 	// 플레이어가 가고 싶은 좌표가 벽이나 갈수가 없는 길이라면 false
-	if (CurrentMapManager->GetMap()->IsWall(PrecUserPos.x, PrecUserPos.y)
-		|| !(CurrentMapManager->GetMap()->IsValidPosition(PrecUserPos.x, PrecUserPos.y)))
+	if (CurrentMapManager->GetMap()->IsWall(PrecPlayerPos.x, PrecPlayerPos.y)
+		|| !(CurrentMapManager->GetMap()->IsValidPosition(PrecPlayerPos.x, PrecPlayerPos.y)))
 	{
 		return false;
 	}
@@ -55,6 +78,36 @@ bool GameManager::CanPlayerMove()
 	}
 }
 
+void GameManager::PlayerMove()
+{
+	UserDirection = CurrentPlayer->GetMoveDirection();
+
+	if (CanPlayerMove(UserDirection))
+	{
+		//플레이어 객체의 위치를 변경
+		switch (UserDirection)
+		{
+		case Direction::Up:
+			CurrentPlayer->SetPositionY(CurrentPlayerPos.y - 1);
+			break;
+		case Direction::Down:
+			CurrentPlayer->SetPositionY(CurrentPlayerPos.y + 1);
+			break;
+		case Direction::Left:
+			CurrentPlayer->SetPositionX(CurrentPlayerPos.x - 1);
+			break;
+		case Direction::Right:
+			CurrentPlayer->SetPositionY(CurrentPlayerPos.x + 1);
+			break;
+		case Direction::Default:
+			break;
+		}
+	}
+}
+
+
+
+
 //void GameManager::InitGame()
 //{
 //	UserPlayer->SetPosition(CurrentMapManager->)
@@ -63,7 +116,6 @@ bool GameManager::CanPlayerMove()
 
 void GameManager::Update()
 {
-	UserDirection = UserPlayer->GetMoveDirection();
-	UserPos = UserPlayer->GetPlayerPose();
+	CurrentPlayerPos = CurrentPlayer->GetPlayerPose();
 }
 

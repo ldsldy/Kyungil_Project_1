@@ -10,23 +10,27 @@ class Map
 public:
 	Map() 
 	{
-		MapData.resize(MapLength, vector<CellType>(MapLength, CellType::Wall));
+		MapCells.resize(MapLength, vector<CellType>(MapLength, CellType::Wall));
 	}
-	~Map() = default;
+	virtual ~Map() = default;
 
-	//맵 데이터 접근
-	inline CellType GetCellType(int InX, int InY) const
-	{
-		if (!IsValidPosition(InX, InY)) return CellType::Wall; //유효하지 않은 좌표는 벽으로 간주
-		return MapData[InY][InX];
-	}
+	
 	//맵 데이터 설정(단, 벽이 아닐 경우에만)
 	inline void SetCellType(int InX, int InY, CellType Type)
 	{
 		if (IsValidPosition(InX, InY)) {
-			MapData[InY][InX] = Type;
+			MapCells[InY][InX] = Type;
 		}
 	}
+	//맵 초기화(모든 셀을 벽으로 설정)
+	virtual void Init()
+	{
+		for (auto& row : MapCells)
+		{
+			fill(row.begin(), row.end(), CellType::Wall);
+		}
+	}
+
 
 	inline bool IsWall(int InX, int InY) const
 	{
@@ -46,18 +50,15 @@ public:
 	}
 
 	inline int GetMapLength() const { return MapLength; }
-
-	//맵 초기화(모든 셀을 벽으로 설정)
-	void Init()
+	//맵 데이터 요구
+	inline CellType GetCellType(int InX, int InY) const
 	{
-		for(auto& row : MapData)
-		{
-			fill(row.begin(), row.end(), CellType::Wall);
-		}
+		if (!IsValidPosition(InX, InY)) return CellType::Wall; //유효하지 않은 좌표는 벽으로 간주
+		return MapCells[InY][InX];
 	}
 	
-private:
+protected:
 	static const int MapLength = 64;
-	vector<vector<CellType>> MapData;
+	vector<vector<CellType>> MapCells;
 };
 

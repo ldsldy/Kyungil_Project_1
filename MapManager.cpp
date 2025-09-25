@@ -1,31 +1,46 @@
 #include "MapManager.h"
+#include "GameManager.h"
 #include <iostream>
+
+void MapManager::Init()
+{
+	GenerateMap(MapCells, 10);
+}
 
 void MapManager::PrintMap() const
 {
 	cout << "InPrint" << endl;
-	for (int y = 0; y < MapLength; y++)
+	for (int y = 0; y < CurrentMapManager->GetMapLengthFromMap(); y++)
 	{
-		for (int x = 0; x < MapLength; x++)
+		for (int x = 0; x < CurrentMapManager->GetMapLengthFromMap(); x++)
 		{
-			switch (ManagerMap->GetCellType(x, y))
+			if (GetCurrentPlayerPos().x == x
+				&& GetCurrentPlayerPos().y == y)
 			{
-			case CellType::Wall:
 				cout.width(2);
-				cout << "бс"; break;
-			case CellType::Floor:
-				cout.width(2);
-				cout << " "; break;
-			case CellType::Token:
-				cout.width(2);
-				cout << "б┌"; break;
-			case CellType::Exit:
-				cout.width(2);
-				cout << "E"; break;
-			case CellType::Player:
-				cout.width(2);
-				cout << "P"; break;
-			default:cout << "?"; break;
+				cout << "P" << endl;
+			}
+			else
+			{
+				switch (ManagerMap->GetCellType(x, y))
+				{
+				case CellType::Wall:
+					cout.width(2);
+					cout << "бс"; break;
+				case CellType::Floor:
+					cout.width(2);
+					cout << " "; break;
+				case CellType::Token:
+					cout.width(2);
+					cout << "б┌"; break;
+				case CellType::Exit:
+					cout.width(2);
+					cout << "E"; break;
+				case CellType::Start:
+					cout.width(2);
+					cout << "S"; break;
+				default:cout << "?"; break;
+				}
 			}
 		}
 		cout << endl;

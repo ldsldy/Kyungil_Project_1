@@ -1,26 +1,23 @@
 #include "BSPGenerator.h"
 #include "Map.h"
 #include <algorithm>
-#include<iostream>
-#include<set>
+#include <iostream>
 
-void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize)
+void BSPGenerator::GenerateMap(unsigned int MinRoomSize)
 {
-	InMap.Init();
-
 	if(Root == nullptr)
-		Root = new BSPNode(0, 0, InMap.GetMapLength(), InMap.GetMapLength());
+		Root = new BSPNode(0, 0, MapLength, MapLength);
 	
 	//BSP 트리 분할
 	SplitNode(Root, MinRoomSize);
 
 	//방 생성
-	CreateRooms(Root, InMap, MinRoomSize);
+	CreateRooms(Root, MinRoomSize);
 
 	//복도 생성
-	CreateCorridors(Root, InMap);
+	CreateCorridors(Root);
 
-	GetLeafRoomsVector(LeafRooms, InMap);
+	GetLeafRoomsVector(LeafRooms);
 	//방의 좌표 디버깅
 	//PrintBSPRooms(Root);
 }
@@ -75,7 +72,7 @@ void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 	SplitNode(InNode->Right, MinRoomSize);
 }
 
-void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoomSize)
+void BSPGenerator::CreateRooms(BSPNode* InNode, unsigned int MinRoomSize)
 {
 	if (!InNode)
 	{
@@ -110,9 +107,9 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 			{
 				for (int x = RoomX; x < RoomX + RoomWidth; x++)
 				{
-					if (InMap.IsValidPosition(x, y))
+					if (IsValidPosition(x, y))
 					{
-						InMap.SetCellType(x, y, CellType::Floor);
+						SetCellType(x, y, CellType::Floor);
 
 					}
 				}
@@ -122,28 +119,28 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 	else
 	{
 		//재귀적으로 자식 노드에 방 생성
-		CreateRooms(InNode->Left, InMap, MinRoomSize);
-		CreateRooms(InNode->Right, InMap, MinRoomSize);
+		CreateRooms(InNode->Left, MinRoomSize);
+		CreateRooms(InNode->Right, MinRoomSize);
 	}
 }
 
-void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
+void BSPGenerator::CreateCorridors(BSPNode* InNode)
 {
 	//cout << "복도 생성" << endl;
 	if (!InNode || InNode->IsLeaf) return;
 
 	//자식 노드들에 대해 복도 생성
-	CreateCorridors(InNode->Left, InMap);
-	CreateCorridors(InNode->Right, InMap);
+	CreateCorridors(InNode->Left);
+	CreateCorridors(InNode->Right);
 
 	//좌우 자식의 방들을 연결
 	if (InNode->Left && InNode->Right)
 	{
-		ConnectRooms(InNode->Left, InNode->Right, InMap);
+		ConnectRooms(InNode->Left, InNode->Right);
 	}
 }
 
-void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap)
+void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2)
 {
 	
 	Point Center1 = InRoom1->GetRoomCenter();
@@ -165,8 +162,8 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 		//수평 복도
 		for (int x = StartX; x <= EndX; x++)
 		{
-			if (InMap.IsValidPosition(x, Center1.y))
-				InMap.SetCellType(x, Center1.y, CellType::Floor);
+			if (IsValidPosition(x, Center1.y))
+				SetCellType(x, Center1.y, CellType::Floor);
 		}
 
 		//수직 복도
@@ -174,8 +171,8 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 		int EndY = max(Center1.y, Center2.y);
 		for (int y = StartY; y <= EndY; y++)
 		{
-			if (InMap.IsValidPosition(Center2.x, y))
-				InMap.SetCellType(Center2.x, y, CellType::Floor);
+			if (IsValidPosition(Center2.x, y))
+				SetCellType(Center2.x, y, CellType::Floor);
 		}
 	}
 	else
@@ -186,24 +183,26 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 		//수직 복도
 		for (int y = StartY; y <= EndY; y++)
 		{
-			if (InMap.IsValidPosition(Center1.x, y))
-				InMap.SetCellType(Center1.x, y, CellType::Floor);
+			if (IsValidPosition(Center1.x, y))
+				SetCellType(Center1.x, y, CellType::Floor);
 		}
 		//수평 복도
 		int StartX = min(Center1.x, Center2.x);
 		int EndX = max(Center1.x, Center2.x);
 		for (int x = StartX; x <= EndX; x++)
 		{
-			if (InMap.IsValidPosition(x, Center2.y))
-				InMap.SetCellType(x, Center2.y, CellType::Floor);
+			if (IsValidPosition(x, Center2.y))
+				SetCellType(x, Center2.y, CellType::Floor);
 		}
 	}
 }
 
-void BSPGenerator::GetLeafRoomsVector(vector<Room>& InLeafRooms, Map& InMap)
+void BSPGenerator::GetLeafRoomsVector(vector<Room>& InLeafRooms, vector<vector<CellType>> InMapCells)
 {
-	//플레이어 위치 설정(첫번째 방의 중앙)
-	InMap.SetCellType(PlayerSpawn.x, PlayerSpawn.y, CellType::Player);
+	int RoomIndex = 0;
+	PlayerSpawn = InLeafRooms[RoomIndex].GetCenter();
+	//플레이어 시작 위치 설정(첫번째 방의 중앙)
+	SetCellType(PlayerSpawn.x, PlayerSpawn.y, CellType::Start);
 
 	//토큰 위치 설정
 }

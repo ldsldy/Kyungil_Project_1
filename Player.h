@@ -7,27 +7,25 @@ extern class GameManager;
 class Player
 {
 public:
-	Player()
-	{}
+	Player(){
+		PlayerPos = (0, 0);
+	}
 
 	//게임 매니저가 플레이어 위치를 요청할 때
 	inline Point GetPlayerPose() const { return PlayerPos; }
-	
-	//적과 충돌(게임오버 or 체력감소)
-	//아이템 획득(일정시간 맵 전체 보여줌, 적 정지) => 게임매니저에 알림
-	Direction GetMoveDirection();
-
-	void SetPosition(Point InPos) { PlayerPos = InPos; }
-
-private:
-	void Move(Direction MoveDirection);
-	//키를 누르면 이동 (이동 속도 조정)
-
+	inline Point GetPlayerX() const { return PlayerPos.x; }
+	inline Point GetPlayerY() const { return PlayerPos.y; }
 	/// <summary>
 	/// 이동할 방향을 결정하는 함수 => 실제 이동 함수로 전달
 	/// </summary>
 	/// <returns>이동할 방향의 Enum</returns>
+	Direction GetMoveDirection();
 
+	inline void SetPositionX(int InX) { PlayerPos.x = InX; }
+	inline void SetPositionY(int InY) { PlayerPos.y = InY; }
+	inline void SetPosition(Point InPos) { PlayerPos = InPos; }
+
+private:
 	//현재 위치
 	Point PlayerPos;
 	int WalkSpeed;	//이동 속도

@@ -5,7 +5,7 @@ enum class CellType
 	Wall,
 	Floor,
 	Token,
-	Player,
+	Start,
 	Exit
 };
 

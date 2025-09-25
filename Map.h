@@ -26,6 +26,12 @@ public:
 	Map(int InWidth, int InHeight);
 	~Map() = default;
 
+    TileType getTile(int x, int y) const;
+    void setTile(int x, int y, TileType type);
+    bool isWalkable(int x, int y) const;
+
+    int getWidth() const;
+    int getHeight() const;
 	//셀 설정(단, 벽이 아닐 경우에만)
 	void SetCell(int InX, int InY, CellType Type);
 	//셀 타입 요구
@@ -44,6 +50,12 @@ public:
 };
 
 
+    std::vector<std::pair<int, int>> getRoomCenters() const;
+
+protected:
+    std::vector<std::vector<TileType>> grid;
+    std::vector<std::pair<int, int>> roomCenters;
+};
 
 //inline bool IsValidPosition(int InX, int InY) const
 //{

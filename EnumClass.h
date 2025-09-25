@@ -1,13 +1,5 @@
 #pragma once
 
-enum class CellType
-{
-	Wall,
-	Floor,
-	Token,
-	Start,
-	Exit
-};
 
 enum class Direction
 {

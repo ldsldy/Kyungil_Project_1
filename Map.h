@@ -1,19 +1,10 @@
 #pragma once
 #include "Point.h"
+#include "EnumClass.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
-
-enum class CellType
-{
-	Wall,
-	Floor,
-	Token,
-	Enemy,
-	Player,
-	Exit
-};
 
 class Map
 {
@@ -23,38 +14,34 @@ private:
 	int Width, Height;
 
 public:
-	Map(int InWidth, int InHeight);
+	Map(int InWidth=64, int InHeight=64);
 	~Map() = default;
 
-    CellType getTile(int x, int y) const;
-    void SetTile(int x, int y, CellType type);
-    bool IsWalkable(int x, int y) const;
-
-    int GetWidth() const;
-    int GetHeight() const;
-	//셀 설정(단, 벽이 아닐 경우에만)
-	void SetCell(int InX, int InY, CellType Type);
 	//셀 타입 요구
-	CellType GetCell(int InX, int InY) const;
+    CellType GetCell(int InX, int InY) const;
+	//셀 설정(단, 벽이 아닐 경우에만)
+    void SetCell(int InX, int InY, CellType InType);
+    
 	//갈 수 있는 위치인지 확인
 	bool IsWalkable(int InX, int InY) const;
+	//맵 안인지 확인
+	bool IsValidPostion(int InX, int InY) const;
+	bool IsWall(int InX, int InY) const;
 
 	//맵 가로, 세로 반환
-	int GetWidth() const { return Width; }
-	int GetHeight() const { return Height; }
+	inline int GetWidth() const {return Width};
+	inline int GetHeight() const {return Height};
 
 	// 방 정보
-	vector<Point> GetRoomCenters() const;
-	void AddRoomCenter(const Point& Center);
-	void ClearRoomCenters();
-};
+	inline vector<Point> GetRoomCenters() const { return RoomCenters; }
+	inline void AddRoomCenter(const Point& Center) { RoomCenters.push_back(Center); }
+	inline void ClearRoomCenters() { RoomCenters.clear(); };
 
+	//초기화
+	void Clear();
 
-    vector<Point> GetRoomCenters() const;
-
-protected:
-    std::vector<std::vector<TileType>> grid;
-    vector<std::pair<int, int>> roomCenters;
+	//맵 출력
+	void Print(const Point& PlayerPos) const;
 };
 
 //inline bool IsValidPosition(int InX, int InY) const

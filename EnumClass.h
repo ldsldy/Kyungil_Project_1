@@ -1,5 +1,15 @@
 #pragma once
 
+enum class CellType
+{
+	Wall,
+	Floor,
+	Token,
+	Enemy,
+	Player,
+	Exit,
+	Start
+};
 
 enum class Direction
 {
@@ -7,5 +17,12 @@ enum class Direction
 	Down,
 	Left,
 	Right,
-	Default
+	None
+};
+
+enum class GameState
+{
+	Playing,
+	GameOver,
+	Clear
 };

@@ -6,8 +6,16 @@ struct Point
 
 	constexpr Point(int x = 0, int y = 0) :x(x), y(y) {}
 
-	inline bool operator==(const Point& other) const
+	inline bool operator==(const Point& Other) const
 	{
-		return x == other.x && y == other.y;
+		return x == Other.x && y == Other.y;
+	}
+	inline Point operator+(const Point& Other) const
+	{
+		return Point(x + Other.x, y + Other.y);
+	}
+	inline Point operator-(const Point& Other) const
+	{
+		return Point(x - Other.x, y - Other.y);
 	}
 };

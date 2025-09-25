@@ -15,7 +15,7 @@ void Map::SetCell(int InX, int InY, CellType Type)
 
 CellType Map::GetCell(int InX, int InY) const
 {
-	if (!IsValidPosition())
+	if (!IsValidPosition(InX, InY))
 		return CellType::Wall;
 	return MapData[InY][InX];
 }

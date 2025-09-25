@@ -428,7 +428,7 @@ Point BSPGenerator::GetPlayerSpawn() const
 vector<Point> BSPGenerator::GetTokenSpawns(int InCount) const
 {
 	vector<Point> TokenSpawns;
-	for (int i = 1; i < TokenSpawns.size() < InCount; i++)
+	for (int i = 1; TokenSpawns.size() < InCount; i++)
 	{
 		if (LeafRooms.size() > i)
 			TokenSpawns.push_back(LeafRooms[i].GetCenter()); //센터가 아닌 랜덤 위치로 바꾸기

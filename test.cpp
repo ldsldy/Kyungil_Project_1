@@ -1,19 +1,50 @@
 #include "MapManager.h"
+#include "BSPGenerator.h"
+#include "Map.h"
 #include <iostream>
-//단일 책임
-//게임 매니저를 통하자
 
-//플레이어, 적, 맵이 게임 매니저에게 무엇을 했는지 알리면 게임 매니저가 처리해서
-//다른 클래스로 뿌린다.
+void PrintMapInTest(Map* InMap);
+
 int main()
 {
+
 	cout << "====맵 생성기 테스트==========\n";
 	//맵 매니저 생성
-	MapManager MyMapManager;
-	//맵 생성
-	MyMapManager.GenerateBSPMap(6);
+	//MapManager MyMapManager;
 	//맵 출력
-	MyMapManager.PrintMap();
+	//MyMapManager.PrintMap();
+	Map  MyMap;
+	BSPGenerator* MyBSPGen;
+	MyBSPGen = new BSPGenerator();
+	MyBSPGen->GenerateMap(MyMap, 10);
+	PrintMapInTest(&MyMap);
 
 	return 0;
+}
+
+void PrintMapInTest(Map* InMap)
+{
+	for (int y = 0; y < InMap->GetMapLength(); y++)
+	{
+		for (int x = 0; x < InMap->GetMapLength(); x++)
+		{
+			switch (InMap->GetCellType(x, y))
+			{
+			case CellType::Wall: 
+				cout.width(2);
+				cout << "■"; break;
+			case CellType::Floor: 
+				cout.width(2);
+				cout << " "; break;
+			case CellType::Item: 
+				cout.width(2);
+				cout << "★"; break;
+			case CellType::Exit: 
+				cout.width(2);
+				cout << "E"; break;
+			default:cout << "?"; break;
+			}
+		}
+		cout << endl;
+	}
 }

@@ -1,5 +1,6 @@
 #include "BSPGenerator.h"
 #include <algorithm>
+#include<iostream>
 #include "Map.h"
 
 
@@ -18,11 +19,14 @@ void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize)
 
 	//복도 생성
 	CreateCorridors(Root, InMap);
+
+	//방의 좌표 디버깅
+	PrintBSPRooms(Root);
 }
 
 void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 {
-	int MinRegionLength = MinRoomSize * 2 + 1;
+	int MinRegionLength = MinRoomSize*2+1; //13
 	// 노드가 없으면 종료
 	if (!InNode) return;
 
@@ -72,29 +76,39 @@ void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize)
 
 void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoomSize)
 {
-	if (!InNode) return;
+	if (!InNode)
+	{
+		cout << "InNode is null" << endl;
+		return;
+	}
 
 	if (InNode->IsLeaf)
 	{
-		//리프 노드에 방 생성 (벽 2개 두께 고려)
-		int RoomWidth = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
-		int RoomHeight = max(MinRoomSize, InNode->Height - 2 - (rng() % 3));
-
-		//방의 위치는 노드 내부에서 랜덤 (벽 1칸 두께 고려)
-		int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
-		int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
-		
-		//노드에 방 정보 저장
-		InNode->ContainedRoom = Room(RoomX, RoomY, RoomWidth, RoomHeight);
-
-		//맵에 방 생성
-		for (int y = RoomY; y < RoomY + RoomHeight; y++)
+		if (InNode->Width >= MinRoomSize+2 && InNode->Height >= MinRoomSize + 2)
 		{
-			for (int x = RoomX; x < RoomX + RoomWidth; x++)
+			//리프 노드에 방 생성 (벽 2개 두께 고려)
+			int RoomWidth = max(MinRoomSize, InNode->Width - 2 - (rng() % 3));
+			int RoomHeight = max(MinRoomSize, InNode->Height - 2 - (rng() % 3));
+
+			//방의 위치는 노드 내부에서 랜덤 (벽 1칸 두께 고려)
+			int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
+			int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
+
+			//노드에 방 정보 저장
+			InNode->ContainedRoom = Room(RoomX, RoomY, RoomWidth, RoomHeight);
+
+			cout << "Room Created at (" << RoomX << "," << RoomY << ") Size: " << RoomWidth << "x" << RoomHeight << endl;
+
+			//맵에 방 생성
+			for (int y = RoomY; y < RoomY + RoomHeight; y++)
 			{
-				if (InMap.IsValidPosition(x, y))
+				for (int x = RoomX; x < RoomX + RoomWidth; x++)
 				{
-					InMap.SetCellType(x, y, CellType::Floor);
+					if (InMap.IsValidPosition(x, y))
+					{
+						InMap.SetCellType(x, y, CellType::Floor);
+
+					}
 				}
 			}
 		}
@@ -109,6 +123,7 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 
 void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
 {
+	cout << "복도 생성" << endl;
 	if (!InNode || InNode->IsLeaf) return;
 
 	//자식 노드들에 대해 복도 생성
@@ -124,6 +139,11 @@ void BSPGenerator::CreateCorridors(BSPNode* InNode, Map& InMap)
 
 void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap)
 {
+	/*if(!InRoom1->ContainedRoom.IsValid() || !InRoom2->ContainedRoom.IsValid())
+	{
+		cout << "One of the rooms is invalid, cannot connect." << endl;
+		return;
+	}*/
 	Point Center1 = InRoom1->GetRoomCenter();
 	Point Center2 = InRoom2->GetRoomCenter();
 
@@ -168,4 +188,18 @@ void BSPGenerator::ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, 
 				InMap.SetCellType(x, Center2.y, CellType::Floor);
 		}
 	}
+	printf("Corridor connected between (%d, %d) and (%d, %d)\n", Center1.x, Center1.y, Center2.x, Center2.y);
+}
+
+//생성된 모든 BSPNode들의 Room의 Center값을 출력하는 함수(디버깅용)
+void  BSPGenerator::PrintBSPRooms(const BSPNode* InNode)
+{
+	if (!InNode) return;
+	if (InNode->IsLeaf && InNode->ContainedRoom.IsValid())
+	{
+		Point Center = InNode->ContainedRoom.GetCenter();
+		std::cout << "Room Center: (" << Center.x << ", " << Center.y << ")\n";
+	}
+	PrintBSPRooms(InNode->Left);
+	PrintBSPRooms(InNode->Right);
 }

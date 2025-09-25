@@ -42,6 +42,7 @@ struct BSPNode
 
 	inline Point GetRoomCenter() const 
 	{
+		//리프 노드이고 방이 유효하면 방 중심점 반환
 		if (IsLeaf && ContainedRoom.IsValid())
 		{
 			return ContainedRoom.GetCenter();
@@ -54,7 +55,8 @@ struct BSPNode
 			if (Right && Right->GetRoomCenter().x !=0)
 				return Right->GetRoomCenter();
 		}
-		return Point(-1, -1);
+		//리프 노드이지만 방이 없다.
+		return Point(0, 0);
 	}
 };
 
@@ -87,11 +89,9 @@ private:
 	//두 방을 연결하는 복도 생성
 	void ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap);
 
-	//구역의 중심점 찾기
-	Point GetRoomCenter(const BSPNode* InNode) const;
+	void PrintBSPRooms(const BSPNode* InNode);
 
 	Map* InMap;
 };
-
 
 

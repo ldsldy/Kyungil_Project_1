@@ -1,12 +1,10 @@
 #include "MapManager.h"
 #include <iostream>
 
-void MapManager::GenerateBSPMap(unsigned int MinRoomSize)
-{
-	ManagerMap = new Map();
-	BSPGen = new BSPGenerator();
-	BSPGen->GenerateMap(*ManagerMap, MinRoomSize);
-}
+//void MapManager::GenerateBSPMap(unsigned int MinRoomSize)
+//{
+//	BSPGen->GenerateMap(*ManagerMap, MinRoomSize);
+//}
 
 void MapManager::PrintMap() const
 {

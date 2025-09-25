@@ -67,7 +67,7 @@ private:
 	//특정 좌표의 셀타입 확인/설정 메서드
 	//맵 상태 조희 기능 (isWall, isEmpty, hasItem)
 	static const int MapLength = 64;
-	static const int RegionSize = 8;
+	static const int RegionSize = 5;
 	static const int MaxNumRegions = (MapLength / RegionSize) * (MapLength / RegionSize); //64/8=8 -> 8*8=64 가로*세로
 	vector<vector<CellType>> MapData;
 };

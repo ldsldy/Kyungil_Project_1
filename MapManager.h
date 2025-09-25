@@ -22,12 +22,16 @@ private:
 	Map* ManagerMap;
 	BSPGenerator* BSPGen;
 	int MapLength;
-	int RegionSize;
 	int MapManagerToken; //맵에 설치된 토큰 갯수
+	
+	inline Point GetPlayer() const { return BSPGen->GetPlayerSpawn(); }
+
 public:
 	MapManager() : ManagerMap(new Map), BSPGen(new BSPGenerator)
 	{
-		BSPGen->GenerateMap(*ManagerMap, 6);
+		cout << "MapManager Constructed\n";
+		MapLength = ManagerMap->GetMapLength();
+		BSPGen->GenerateMap(*ManagerMap, 10);
 	}
 	~MapManager()
 	{
@@ -35,9 +39,9 @@ public:
 		delete BSPGen;
 		cout << "MapManager Destructed\n";
 	}
-
-	//맵 생성
-	//void GenerateBSPMap(unsigned int MinRoomSize = 6);
+	
+	//BSP에서 플레이어 스폰 위치를 받아와 Map에 반영
+	void PlayerSpawnPoint();
 	
 	//GameManager에서 Map정보와 함수를 얻기 위함
 	Map* GetMap() { return ManagerMap;}
@@ -46,14 +50,6 @@ public:
 	void PrintMap() const;
 
 	//=======디버깅============//
-	//맵 출력(디버그용)
-	void PrintTestMap() const;
-
-	//맵의 한 부분 출력(디버그용)
-	void PrintRegionMap() const;
-
 	void PrintMapInfo() const;
-
-	void DataCaching(); //자주 사용하고 메모리를 적게 먹는 데이터 캐싱
 };
 

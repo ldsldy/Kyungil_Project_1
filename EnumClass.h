@@ -4,7 +4,8 @@ enum class CellType
 {
 	Wall,
 	Floor,
-	Item,
+	Token,
+	Player,
 	Exit
 };
 

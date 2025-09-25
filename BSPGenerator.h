@@ -1,8 +1,12 @@
 #pragma once
+#include "Point.h"
 #include <vector>
 #include <memory>
 #include <random>
-#include "Point.h"
+#include <set>
+
+#include <iostream>
+
 
 using namespace std;
 
@@ -25,6 +29,13 @@ struct Room
 	inline bool IsValid() const
 	{
 		return Width > 0 && Height > 0;
+	}
+	
+	bool operator<(const Room& Other) const
+	{
+		if (x != Other.x)
+			return x < Other.x;
+		return y < Other.y;
 	}
 };
 
@@ -67,15 +78,27 @@ public:
 	~BSPGenerator()
 	{
 		delete Root;
+		cout << "BSP Destructed\n";
 	}
 
 	//Map 클래스에서 벡터를 받아 BSP 트리 생성 및 맵 생성
 	void GenerateMap(Map& InMap, unsigned int MinRoomSize = 6);
 
+	inline Point GetPlayerSpawn() const { return PlayerSpawn; }
+
 private:
 	BSPNode* Root;
 	mt19937 rng;
 	bool bIsInitialized;
+	vector<Room> LeafRooms;
+	Point PlayerSpawn;
+	//Point ExitPoint;
+	//vector<Point> EnemySpawnPositions;
+	//vector<Point> TokenSpawnPositions;
+
+	//방 내부의 랜덤 좌표를 반환
+	//플레이어는 방의 중앙, 적은 방의 랜덤 위치(플레이어가 없는 방), Exit은 가장 먼 방에 위치, 토큰은 랜덤
+	
 
 	//BSP 트리 분할
 	void SplitNode(BSPNode* InNode, unsigned int MinRoomSize);
@@ -89,6 +112,10 @@ private:
 	//두 방을 연결하는 복도 생성
 	void ConnectRooms(const BSPNode* InRoom1, const BSPNode* InRoom2, Map& InMap);
 
+	//리프 노드의 방들을 벡터에 저장
+	void GetLeafRoomsVector(vector<Room>& InLeafRooms, Map& InMap);
+
+	//방의 좌표를 전부 출력(디버깅용)
 	void PrintBSPRooms(const BSPNode* InNode);
 
 	Map* InMap;

@@ -2,10 +2,9 @@
 #include"EnumClass.h"
 #include"Point.h"
 
-extern class Player;
-extern class MapManager;
-extern class EnemyManager;
-extern class ItemManager;
+class Player;
+class MapManager;
+class EnemyManager;
 
 class GameManager
 {
@@ -19,18 +18,15 @@ public:
 	void Run();
 
 	bool CanPlayerMove();
+
+	//플레이어 위치 초기화
+	void InitGame();
 private:
 	Direction UserDirection = Direction::Default;
 	Point UserPos = 0;
-	//토큰의 갯수를 맵매니저로 부터 받아서 관리
-	//플레이어가 토큰 충돌을 알릴때 제거=>맵매니저에게 알림
-	//토큰이 0이 되면 적매니저에게 맵 전체를 추적하라고 알림
 
-	//플레이어가 아이템 획득을 알림 => 획득한 아이템에 따라 적 매니저에게 알림
-	//                            => 맵매니저에게 알림(아이템 위치 제거)
 	Player* UserPlayer;
 	MapManager* CurrentMapManager;
 	EnemyManager* CurrentEnemyManager;
-	ItemManager* CurrentItemManager;
 };
 

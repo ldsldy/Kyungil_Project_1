@@ -1,6 +1,7 @@
 #include "MapManager.h"
 #include "BSPGenerator.h"
 #include "Map.h"
+#include "GameManager.h"
 #include <iostream>
 
 void PrintMapInTest(Map* InMap);
@@ -9,15 +10,16 @@ int main()
 {
 
 	cout << "====맵 생성기 테스트==========\n";
-	//맵 매니저 생성
+	////맵 매니저 생성
 	//MapManager MyMapManager;
-	//맵 출력
+	////맵 출력
 	//MyMapManager.PrintMap();
-	Map  MyMap;
-	BSPGenerator* MyBSPGen;
-	MyBSPGen = new BSPGenerator();
-	MyBSPGen->GenerateMap(MyMap, 10);
-	PrintMapInTest(&MyMap);
+
+	//게임 매니저 생성
+	GameManager* MyGameManger;
+	MyGameManger = new GameManager;
+	MyGameManger->Run();
+
 
 	return 0;
 }
@@ -36,7 +38,7 @@ void PrintMapInTest(Map* InMap)
 			case CellType::Floor: 
 				cout.width(2);
 				cout << " "; break;
-			case CellType::Item: 
+			case CellType::Token:
 				cout.width(2);
 				cout << "★"; break;
 			case CellType::Exit: 

@@ -2,6 +2,7 @@
 #include "EnumClass.h"
 #include <vector>
 
+#include <iostream>
 using namespace std;
 
 class Map
@@ -11,6 +12,7 @@ public:
 	{
 		MapData.resize(MapLength, vector<CellType>(MapLength, CellType::Wall));
 	}
+	~Map() = default;
 
 	//맵 데이터 접근
 	inline CellType GetCellType(int InX, int InY) const
@@ -30,13 +32,9 @@ public:
 	{
 		return GetCellType(InX, InY) == CellType::Wall;
 	}
-	inline bool IsEmpty(int InX, int InY) const
+	inline bool IsFloor(int InX, int InY) const
 	{
 		return GetCellType(InX, InY) == CellType::Floor;
-	}
-	inline bool HasItem(int InX, int InY) const
-	{
-		return GetCellType(InX, InY) == CellType::Item;
 	}
 	inline bool IsExit(int InX, int InY) const
 	{
@@ -48,8 +46,6 @@ public:
 	}
 
 	inline int GetMapLength() const { return MapLength; }
-	inline int GetRegionSize() const { return RegionSize; }
-	inline int GetMaxNumRegions() const { return MaxNumRegions; }
 
 	//맵 초기화(모든 셀을 벽으로 설정)
 	void Init()
@@ -61,14 +57,7 @@ public:
 	}
 	
 private:
-	//변수
-	//64*64 맵 데이터 저장
-	//벽, 통로, (아이템, 탈출구) 위치 정보 보관
-	//특정 좌표의 셀타입 확인/설정 메서드
-	//맵 상태 조희 기능 (isWall, isEmpty, hasItem)
 	static const int MapLength = 64;
-	static const int RegionSize = 5;
-	static const int MaxNumRegions = (MapLength / RegionSize) * (MapLength / RegionSize); //64/8=8 -> 8*8=64 가로*세로
 	vector<vector<CellType>> MapData;
 };
 

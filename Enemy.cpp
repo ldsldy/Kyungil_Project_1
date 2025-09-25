@@ -12,12 +12,6 @@ vector<Point> Enemy::BFSFindPath(const Point& InStart, const Point& InTarget, Ma
 	set<Point> VisitedSet;			// 방문한 노드
 	map<Point, Point> CameFrom; //<현재 노드, 바로 전의 노드> <= backTracking 용
 
-	auto PointLess = [](const Point& A, const Point& B) {
-		if (A.x == B.x)
-			return A.y < B.y;
-		return A.x < B.x;
-		};
-
 	VisitQueue.push(InStart);
 	VisitedSet.insert(InStart);
 

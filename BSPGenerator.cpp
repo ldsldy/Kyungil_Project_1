@@ -222,14 +222,13 @@
 
 void BSPGenerator::GenerateMap(Map& InMap, unsigned int MinRoomSize, int MaxDepth)
 {
-	
-	delete Root;
+	InMap.Clear();
 	LeafRooms.clear();
 
 	InMap.Clear();
 
 	//루트 노드 생성 (맵 테두리는 제외)
-	Root = new BSPNode(1, 1, InMap.GetWidth()-2, InMap.GetHeight() - 2);
+	Root = new BSPNode(0, 0, InMap.GetWidth(), InMap.GetHeight());
 	
 	//BSP 트리 분할
 	SplitNode(Root, MinRoomSize, 0, MaxDepth);
@@ -251,7 +250,7 @@ void BSPGenerator::SplitNode(BSPNode* InNode, unsigned int MinRoomSize, int InDe
 		return;
 
 	//분할 할 수 있는 최소 크기
-	int MinRegionLength = MinRoomSize * 2 + 3;
+	int MinRegionLength = MinRoomSize * 2 + 1;
 
 	// 나누어도 방을 만들 수 없는 크기(방이 2개 들어가는 사이즈)인 경우 종료
 	if (InNode->Width <= MinRegionLength && InNode->Height <= MinRegionLength)
@@ -302,7 +301,7 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 {
 	if (!InNode)
 		return;
-	
+
 	if (InNode->IsLeaf)
 	{
 		// 영역이 충분히 크면 방 생성
@@ -313,8 +312,8 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 			int RoomHeight = max(MinRoomSize, InNode->Height - 2 - (rng() % 3));
 	
 			//영역 안의 랜덤한 위치에 방 배치 (시작위치 벽 두께 고려)
-			int RoomX = InNode->x + 1 + (rng() % (InNode->Width - RoomWidth - 1));
-			int RoomY = InNode->y + 1 + (rng() % (InNode->Height - RoomHeight - 1));
+			int RoomX = InNode->x +1 + (rng() % (InNode->Width - RoomWidth - 1));
+			int RoomY = InNode->y +1 + (rng() % (InNode->Height - RoomHeight - 1));
 	
 			//노드에 방 정보 저장
 			InNode->ContainedRoom = Room(RoomX, RoomY, RoomWidth, RoomHeight);
@@ -343,6 +342,7 @@ void BSPGenerator::CreateRooms(BSPNode* InNode, Map& InMap, unsigned int MinRoom
 	}
 	else
 	{
+		cout << "방생성 ";
 		//재귀적으로 자식 노드에 방 생성
 		CreateRooms(InNode->Left, InMap, MinRoomSize);
 		CreateRooms(InNode->Right, InMap,MinRoomSize);

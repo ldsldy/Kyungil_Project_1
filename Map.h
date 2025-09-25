@@ -42,6 +42,7 @@ public:
 
 	//¸Ê Ãâ·Â
 	void Print(const Point& PlayerPos) const;
+	void PrintDarkMode(const Point& PlayerPos) const;
 };
 
 //inline bool IsValidPosition(int InX, int InY) const

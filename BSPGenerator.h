@@ -75,7 +75,7 @@ private:
 	vector<Room> LeafRooms;
 
 public:
-	BSPGenerator() : rng(random_device{}()), Root(nullptr) {}
+	BSPGenerator() : rng(random_device{}()), Root(nullptr) { }
 	~BSPGenerator(){ delete Root; }
 
 	//Map 클래스에서 벡터를 받아 BSP 트리 생성 및 맵 생성

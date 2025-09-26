@@ -1,11 +1,12 @@
 #include "Map.h"
-//#include <Windows.h>d
+
+
 Map::Map(int InWidth, int InHeight)
 {
 	Width = InWidth;
 	Height = InHeight;
 	MapData.resize(InHeight, vector<CellType>(InWidth, CellType::Wall));
-	cout << "Map Created. Width: " << InWidth << ", Height: " << InHeight << endl;
+	//cout << "Map Created. Width: " << InWidth << ", Height: " << InHeight << endl;
 }
 
 void Map::SetCell(int InX, int InY, CellType Type)
@@ -29,7 +30,7 @@ bool Map::IsWalkable(int InX, int InY) const
 		return false;
 	
 	CellType Cell = GetCell(InX, InY);
-	return (Cell==CellType::Exit || Cell == CellType::Player || Cell == CellType::Enemy
+	return (Cell==CellType::Exit || Cell == CellType::Start
 		|| Cell == CellType::Floor||Cell==CellType::Token);
 }
 
@@ -51,18 +52,16 @@ void Map::Clear()
 	}
 }
 
-
 void Map::Print(const Point& PlayerPos) const
 {
-	system("cls");
-	cout << "Height: " << Height << ", Width: " << Width << endl;
+	//system("cls");
     for (int y = 0; y < Height; y++)
     {
         for (int x = 0; x < Width; x++)
         {
             if (PlayerPos.x == x && PlayerPos.y == y)
             {
-				//cout.width(2);
+				cout.width(2);
                 cout << "P";
             }
             else
@@ -70,29 +69,29 @@ void Map::Print(const Point& PlayerPos) const
                 switch (GetCell(x, y))
                 {
 				case CellType::Wall:
-					//cout.width(2);
-					cout << "W";
-					//cout << "бс"; 
+					cout.width(2);
+					//cout << "W";
+					cout << "бс"; 
 					break;
 				case CellType::Floor:
-					//cout.width(2);
+					cout.width(2);
 					cout << " "; 
 					break;
 				case CellType::Token:
-					//cout.width(2);
+					cout.width(2);
 					cout << "T";
 					//cout << "б┌"; 
 					break;
 				case CellType::Exit:
-					//cout.width(2);
+					cout.width(2);
 					cout << "E"; 
 					break;
 				case CellType::Start:
-					//cout.width(2);
+					cout.width(2);
 					cout << "S"; 
 					break;
 				case CellType::Enemy:
-					//cout.width(2);
+					cout.width(2);
 					cout << "X"; 
 					break;
 				default:cout << "?"; break;

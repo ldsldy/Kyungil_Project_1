@@ -24,8 +24,11 @@ public:
     
 	//갈 수 있는 위치인지 확인
 	bool IsWalkable(int InX, int InY) const;
+	
 	//맵 안인지 확인
 	bool IsValidPosition(int InX, int InY) const;
+
+	//벽인지 확인
 	bool IsWall(int InX, int InY) const;
 
 	//맵 가로, 세로 반환
@@ -44,30 +47,3 @@ public:
 	void Print(const Point& PlayerPos) const;
 	void PrintDarkMode(const Point& PlayerPos) const;
 };
-
-//inline bool IsValidPosition(int InX, int InY) const
-//{
-//	return InX >= 0 && InX < Width && InY >= 0 && InY < Height;
-//}
-//타일 상태 확인
-//inline bool IsWall(int InX, int InY) const
-//{
-//	return GetCellType(InX, InY) == CellType::Wall;
-//}
-//inline bool IsFloor(int InX, int InY) const
-//{
-//	return GetCellType(InX, InY) == CellType::Floor;
-//}
-//inline bool IsExit(int InX, int InY) const
-//{
-//	return GetCellType(InX, InY) == CellType::Exit;
-//}
-
-	////맵 초기화(모든 셀을 벽으로 설정)
-	//void Init()
-	//{
-	//	for (auto& row : MapCells)
-	//	{
-	//		fill(row.begin(), row.end(), CellType::Wall);
-	//	}
-	//}

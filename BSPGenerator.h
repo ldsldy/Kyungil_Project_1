@@ -21,13 +21,6 @@ struct Room
 	{
 		return Width > 0 && Height > 0;
 	}
-	
-	//bool operator==(const Room& Other) const
-	//{
-	//	if (x == Other.x && y == Other.y)
-	//		return true;
-	//	return false;
-	//}
 };
 
 struct BSPNode
@@ -101,9 +94,6 @@ private:
 	//두 방을 연결하는 복도 생성
 	// InCenter1, InCenter2: 연결할 두 방의 노드
 	void ConnectRooms(const Point& InCenter1, const Point& InCenter2, Map& InMap);
-
-	////리프 노드의 방들을 벡터에 저장
-	//void GetLeafRoomsVector(vector<Room>& InLeafRooms);
 
 	////방의 좌표를 전부 출력(디버깅용)
 	//void PrintBSPRooms(const BSPNode* InNode);

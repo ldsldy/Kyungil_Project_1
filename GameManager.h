@@ -21,8 +21,9 @@ private:
 	bool IsExitOpen;
 	GameState CurrentGameState;
 
-	int TotalTokens;	// 토큰을 두개로 나눈 이유
-	//int CollectedTokens;
+	int TotalTokens;
+
+	bool IsDebugMode;
 public:
 	GameManager();
 	~GameManager() = default;
@@ -30,6 +31,7 @@ public:
 	//게임 시작 함수
 	void Run();
 
+private:
 	//플레이어 위치 초기화
 	void Init();
 
@@ -40,10 +42,19 @@ public:
 	void Print();
 
 	// 적과의 충돌 체크
-	bool IsContactEnemy();
-
-	void CheckGameProgress();
+	bool IsConllisionEnemy();
 
 	inline bool IsAllTokensCollected() const { return TotalTokens == 0; }
+
+	void CashingRoomCentersToEnemy();
+
+	// 디버깅 함수들
+	void RunDebugMode();
+
+	void PrintGameStateForDebug();
+
+	void PrintForDebug();
+
+	bool IsPath(int InX, int InY);
 };
 

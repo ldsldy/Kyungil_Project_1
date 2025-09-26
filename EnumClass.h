@@ -6,9 +6,8 @@ enum class CellType
 	Floor,
 	Token,
 	Enemy,
-	Player,
 	Exit,
-	Start
+	Start,
 };
 
 enum class Direction
@@ -20,6 +19,12 @@ enum class Direction
 	None
 };
 
+enum class EnemyState
+{
+	Patrol,
+	Chasing,
+	Reposing
+};
 enum class GameState
 {
 	Playing,

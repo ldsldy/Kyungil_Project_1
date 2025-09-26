@@ -13,7 +13,7 @@ private:
 public:
 	Player():Position(0,0){}
 
-	inline Point GetPosition() const { return Position; }
+	inline const Point GetPosition() const { return Position; }
 	inline void SetPosition(const Point& InPos) { Position = InPos; }
 	
 	// <summary>

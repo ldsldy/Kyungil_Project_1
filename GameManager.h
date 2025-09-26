@@ -14,15 +14,18 @@ private:
 	Map GameMap;
 	BSPGenerator GameMapGenerator;
 	Player GamePlayer;
-	Enemy GameEnemy;
-
+	vector<Enemy> GameEnemies;
 	vector<Point> TokenPositions;
+	
 	Point ExitPosition;
 	bool IsExitOpen;
 	GameState CurrentGameState;
 
 	int TotalTokens;
+	int MaxEnemies = 3;
 
+	static constexpr int MapWidth = 64;
+	static constexpr int MapHeighth = 64;
 	bool IsDebugMode;
 public:
 	GameManager();
@@ -41,20 +44,13 @@ private:
 	//맵 출력
 	void Print();
 
+	void SpawnEnemies();
+
 	// 적과의 충돌 체크
-	bool IsConllisionEnemy();
+	bool IsConllisionEnemies();
 
 	inline bool IsAllTokensCollected() const { return TotalTokens == 0; }
 
-	void CashingRoomCentersToEnemy();
-
-	// 디버깅 함수들
-	void RunDebugMode();
-
-	void PrintGameStateForDebug();
-
-	void PrintForDebug();
-
-	bool IsPath(int InX, int InY);
+	void CashingRoomCentersToEnemy(Enemy& InEnemy);
 };
 

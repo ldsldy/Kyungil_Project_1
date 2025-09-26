@@ -214,7 +214,7 @@ vector<Point> BSPGenerator::GetTokenSpawns(int InCount) const
 	for (int i = 1; TokenSpawns.size() < InCount; i++)
 	{
 		if (LeafRooms.size() > i)
-			TokenSpawns.push_back(LeafRooms[i].GetCenter()); //센터가 아닌 랜덤 위치로 바꾸기
+			TokenSpawns.push_back(LeafRooms[i].GetRandomPoint(rng)); //센터가 아닌 랜덤 위치로 바꾸기
 		else
 			break;
 	}
@@ -226,11 +226,22 @@ vector<Point> BSPGenerator::GetTokenSpawns(int InCount) const
 	return TokenSpawns;
 }
 
-Point BSPGenerator::GetEnemySpawn() const
+vector<Point> BSPGenerator::GetEnemiesSpawn(int InCount) const
 {
-	if (LeafRooms.size() > 2)
-		return LeafRooms[LeafRooms.size() / 2].GetCenter(); //리프룸 노드 선택을 랜덤하게 바꾸기
-	return Point();
+	vector<Point> EnemiesSpawns;
+	for (int i = 1; EnemiesSpawns.size() < InCount; i++)
+	{
+		if (LeafRooms.size() > i)
+			EnemiesSpawns.push_back(LeafRooms[i].GetCenter()); //센터가 아닌 랜덤 위치로 바꾸기
+		else
+			break;
+	}
+	if (EnemiesSpawns.size() < InCount)
+	{
+		cout << "토큰을 전부 생성하지 못했습니다." << endl;
+		//같은 방에 여러 토큰 또 추가
+	}
+	return EnemiesSpawns;
 }
 
 Point BSPGenerator::GetExitSpawn() const

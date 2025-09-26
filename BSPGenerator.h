@@ -21,6 +21,13 @@ struct Room
 	{
 		return Width > 0 && Height > 0;
 	}
+
+	inline Point GetRandomPoint(mt19937 InRng) const
+	{
+		int RandX = x+1 + (InRng() % Width-2);
+		int RandY = y+1 + (InRng() % Height-2);
+		return Point(RandX, RandY);
+	}
 };
 
 struct BSPNode
@@ -77,7 +84,7 @@ public:
 	//플레이어 시작 위치는 첫번쨰 리프 노드 방의 중심
 	Point GetPlayerSpawn() const;
 	vector<Point> GetTokenSpawns(int InCount) const;
-	Point GetEnemySpawn() const;
+	vector<Point> GetEnemiesSpawn(int InCount) const;
 	Point GetExitSpawn() const;
 
 private:

@@ -13,17 +13,23 @@ class Enemy
 private:
 	Point Position;
 
-	int PathUpdateCounter;
-	const int PathUpdateThreshold;
+	int PathUpdateCounter;			//경로 재탐색을 위한 카운터(임계치를 넘으면 실시)
+	const int PathUpdateThreshold;	//경로 재탐색하기까지의 시간
+	int ExhaustedCount;				//플레이어를 추적하다 지침을 나타내기 위한 카운터
+	int ExhaustedThreshold;			//지침 카운터가 이 값을 넘으면 잠시 휴식
+	int RestTime;					//여기서는 회복까지 걸리는 시간 //탐색 범위와 같게 혹은 +1
+	int DetectionRange;				//적의 탐색 범위
 	
-	EnemyState CurrentState; //현재 상태: 순찰, 추적, 휴식
+
+	EnemyState CurrentState;	//현재 상태: 순찰, 추적, 휴식
 	vector<Point> ChasingPath;	//플레이어 추적 경로 저장
 	vector<Point> PatrolPath;	//다음 방 중심 좌표로 이동 경로 저장
 	vector<Point> RoomCenters;
 
 	mt19937 rng;
 public:
-	Enemy() :Position(0, 0), PathUpdateCounter(0), PathUpdateThreshold(3), rng(random_device{}()){}
+	Enemy() :Position(0, 0), PathUpdateCounter(0), PathUpdateThreshold(3), ExhaustedCount(0), ExhaustedThreshold(8),
+		RestTime(6), DetectionRange(6), rng(random_device{}()), CurrentState(EnemyState::Patrol){}
 
 	//적의 정보를 얻거나 설정
 	inline const Point GetPosition() const { return Position; }
@@ -56,9 +62,10 @@ private:
 	/// <returns>목표에서 자신까지의 경로의 좌표 벡터</returns>
 	vector<Point> BFSFindPath(const Point& InStart, const Point& InTarget, Map& InMap);
 
+	//순찰상태(방과 방 사이를 돌아다닌다)
 	void InActionPatrol(Map& InMap);
+	//추적상태(플레이어 위치로 이동)
 	void InActionChasing(const Point& InPlayerPos, Map& InMap);
-	void InActionReposing();
 
 	/// <summary>
 	/// 플레이어가 일정 범위 안에 있는지 확인하는 함수
@@ -69,8 +76,7 @@ private:
 	bool IsFindPlayer(const Point& InPlayerPos, const int InDetectionRange);
 };
 
-//추적 범위(기본, 토큰이 다 사라지면 맵 전체) <= 추가 
-//플레이어와 달리기가 같아서 한번 추적하면 계속 추적하니 일정 셀을 움직이면 잠시 휴식	<= 추가
-//적 발견(플레이어가 범위를 가진게 좋은가? 고민 좀)시 추적 이동(플레이어 위치)
-//칸마다 추적하면 너무 부담되니 플레이어가 일정 범위 안에 있는지만 체크하고
+//추적 범위(기본, 토큰이 다 사라지면 맵 전체)
+//플레이어와 달리기가 같아서 한번 추적하면 계속 추적하니 일정 셀을 움직이면 잠시 휴식
+//적 발견시 추적 이동(플레이어 위치)
 

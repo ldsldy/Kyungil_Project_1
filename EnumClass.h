@@ -23,7 +23,7 @@ enum class EnemyState
 {
 	Patrol,
 	Chasing,
-	Reposing
+	Exhausted
 };
 enum class GameState
 {

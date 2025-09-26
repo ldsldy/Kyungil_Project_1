@@ -5,7 +5,8 @@
 #include <queue>
 #include <cmath>
 
-//BFS는 목표에서 현재위치까지의 경로 탐색 => back으로 이동할 위치를 얻으면 무조건! pop으로 제거
+//!!! 프로젝트의 경로추적 알고리즘은 목표에서 현재위치까지의 경로 탐색 
+//!!! => InVector.back()으로 이동할 위치를 얻으면 무조건! pop으로 제거
 
 void Enemy::CashingRoomCenters(Map& InMap)
 {
@@ -71,6 +72,9 @@ vector<Point> Enemy::BFSFindPath(const Point& InStart, const Point& InTarget, Ma
 
 void Enemy::InActionPatrol(Map& InMap)
 {
+	//순찰을 시작하면 ExhaustedCount 초기화
+	ExhaustedCount = 0;
+
 	if (PatrolPath.empty())
 	{
 		PatrolPath = BFSFindPath(Position, RoomCenters[rng() % RoomCenters.size()], InMap);
@@ -99,11 +103,6 @@ void Enemy::InActionChasing(const Point& InPlayerPos, Map& InMap)
 	PathUpdateCounter++;
 }
 
-//void Enemy::InActionReposing()
-//{
-//	//지침 카운트가 일정 이상 차오르면 플레이어가 도망가도록 정지
-//}
-
 bool Enemy::IsFindPlayer(const Point& InPlayerPos, const int InDetectionRange)
 {
 	int DistX = abs(Position.x - InPlayerPos.x);
@@ -123,7 +122,7 @@ bool Enemy::IsFindPlayer(const Point& InPlayerPos, const int InDetectionRange)
 void Enemy::Update(const Point& InPlayerPos, Map& InMap)
 {
 	// 플레이어를 발견하면 추적 모드로 전환하며 순찰 가던 경로를 초기화
-	if (IsFindPlayer(InPlayerPos, 6))
+	if (IsFindPlayer(InPlayerPos, DetectionRange))
 	{
 		PatrolPath.clear();	// 순찰 경로 초기화
 		CurrentState = EnemyState::Chasing;
@@ -133,7 +132,8 @@ void Enemy::Update(const Point& InPlayerPos, Map& InMap)
 		CurrentState = EnemyState::Patrol;
 	}
 
-	// 추적 중이라면 추적이 최우선 =>
+	// 지친 상태가 최우선 =>
+	// 추적=>
 	// 추적 중이 아니지만 추적 경로가 남아있다면 처리=>
 	// 추적 중이 아니고 추적 경로도 없다면 순찰
 	if (CurrentState == EnemyState::Chasing)

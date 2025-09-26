@@ -106,12 +106,11 @@ void Map::Print(const Point& PlayerPos) const
 void Map::PrintDarkMode(const Point& PlayerPos) const
 {
 	//부분 출력
-	system("cls");
+	//system("cls");
 	int ShowStartX = PlayerPos.x - 8;
 	int ShowStartY = PlayerPos.y - 8;
 	int ShowEndX = PlayerPos.x + 8;
 	int ShowEndY = PlayerPos.y + 8;
-	cout << "Height: 16" << ", Width: 16" << endl;
 	for (int y = ShowStartY; y < ShowEndY; y++)
 	{
 		for (int x = ShowStartX; x < ShowEndX; x++)
@@ -122,7 +121,7 @@ void Map::PrintDarkMode(const Point& PlayerPos) const
 			}
 			else if (PlayerPos.x == x && PlayerPos.y == y)
 			{
-				//cout.width(2);
+				cout.width(2);
 				cout << "P";
 			}
 			else
@@ -130,29 +129,27 @@ void Map::PrintDarkMode(const Point& PlayerPos) const
 				switch (GetCell(x, y))
 				{
 				case CellType::Wall:
-					//cout.width(2);
-					cout << "W";
-					//cout << "■"; 
+					cout.width(2);
+					cout << "■"; 
 					break;
 				case CellType::Floor:
-					//cout.width(2);
+					cout.width(2);
 					cout << " ";
 					break;
 				case CellType::Token:
-					//cout.width(2);
-					cout << "T";
-					//cout << "★"; 
+					cout.width(2);
+					cout << "★"; 
 					break;
 				case CellType::Exit:
-					//cout.width(2);
+					cout.width(2);
 					cout << "E";
 					break;
 				case CellType::Start:
-					//cout.width(2);
+					cout.width(2);
 					cout << "S";
 					break;
 				case CellType::Enemy:
-					//cout.width(2);
+					cout.width(2);
 					cout << "X";
 					break;
 				default:cout << "?"; break;

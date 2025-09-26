@@ -24,8 +24,8 @@ private:
 	int TotalTokens;
 	int MaxEnemies = 3;
 
-	static constexpr int MapWidth = 64;
-	static constexpr int MapHeighth = 64;
+	static constexpr int MapWidth = 50;
+	static constexpr int MapHeighth = 50;
 	bool IsDebugMode;
 public:
 	GameManager();

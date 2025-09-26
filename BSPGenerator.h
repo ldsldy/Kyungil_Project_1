@@ -24,8 +24,8 @@ struct Room
 
 	inline Point GetRandomPoint(mt19937 InRng) const
 	{
-		int RandX = x+1 + (InRng() % Width-2);
-		int RandY = y+1 + (InRng() % Height-2);
+		int RandX = x+1 + (InRng() % (Width-1));
+		int RandY = y+1 + (InRng() % (Height-1));
 		return Point(RandX, RandY);
 	}
 };
